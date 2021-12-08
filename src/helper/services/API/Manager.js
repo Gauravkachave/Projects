@@ -78,3 +78,15 @@ export const listAllCategoryAPI= (params,signal) => {
     return serviceRequest(url,requestOptions);
 }
 
+export const updateCategoryAPI = (params,signal) => {
+    let url=API_ENDPOINTS.updateCategory;
+    
+    let requestOptions = {
+        method:'POST',
+        body:JSON.stringify(params),
+        headers:{
+            'session-token' : getSessionToken('session_token')
+        }
+    }
+    return serviceRequest(url,requestOptions);
+}
