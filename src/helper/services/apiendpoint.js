@@ -10,6 +10,7 @@ export const API_ENDPOINTS = {
     updateGroup : API_GATEWAY_URL + 'updateGroup',
     createFolder : API_GATEWAY_URL + 'addFolder',
     getFolderList : API_GATEWAY_URL + 'folderList',
+    updateFolderList : API_GATEWAY_URL + 'update_folder',
     listAllFolder : API_GATEWAY_URL + 'listAllFolder',
     addCategory : API_GATEWAY_URL + 'addCategory',
     listAllCategory :  API_GATEWAY_URL + 'category/listAll',

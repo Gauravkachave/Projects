@@ -1,6 +1,7 @@
 import React,{useEffect,useState} from 'react';
 import ManageCategoriesComponent from '../../../components/Manager/ManagerTemplates/ManageCategories';
 import {listAllFolderAPI,listAllCategoryAPI,updateCategoryAPI} from '../../../helper/services/API/Manager';
+import Snackbar from '../../../components/Snackbar/Snackbar';
 
 const ManageCategories = () => {
     const [inputs,setInputs]=useState({});
@@ -15,14 +16,21 @@ const ManageCategories = () => {
     const [catState,setCatState]=useState(null);
     const [catId,setCatId]=useState(null);
     const handleExpandClick = () => { setExpanded(!expanded) };
-
-    const handleEdit = (id) => {
-        setEditDialog(!editDialog);
-            const data=subCategory.find(item => item.cat_id === id );
-            setCatName(data.cat_name);
-            setCatState(data.cat_state);
-            setCatId(id);
+    const [snackbarState,setSnackbarState]=useState({
+        messageInfo:{
+            open:false,
+            message:null,
+            variant:'success'
         }
+    })
+
+        const handleEdit = (id) => {
+            setEditDialog(!editDialog);
+                const data=subCategory.find(item => item.cat_id === id );
+                setCatName(data.cat_name);
+                setCatState(data.cat_state);
+                setCatId(id);
+            }
         const handleDialog = () => {
             setEditDialog(!editDialog);
         }
@@ -73,24 +81,25 @@ const ManageCategories = () => {
                 'cat_name':catName,
                 'cat_state':catState,
             }
-            // subCategory[catId]=params;
 
             updateCategoryAPI(params).then((res) => {
-                console.log(res);
                 const index = subCategory.findIndex((value) => value.cat_id === catId);
                 subCategory[index] = params;
-                // setSubCategory(subCategory);
                 console.log(subCategory);
-            //    let obj={
-            //     catId :catId,
-            //     folder_id:inputs['folder_id'],
-            //     cat_name:catName,
-            //     cat_state:catState,
-            //    }
-            //    subCategory[catId]=obj;
-            //    console.log(obj);
-                // setSubCategory(params);
                 setEditDialog(!editDialog);
+                console.log(res);
+                if(res.success && res.message_code === 10016){
+                    setSnackbarState({
+                        messageInfo:{
+                            open:true,
+                            message:res.message,
+                            variant:'success'
+                        }
+                    })
+                }else{
+                    console.log(res);
+                }
+                
             })
         }
 
@@ -104,6 +113,21 @@ const ManageCategories = () => {
         }
     return ( 
         <React.Fragment>
+             {snackbarState.messageInfo.open && <Snackbar
+            message={snackbarState.messageInfo.message}
+            open={snackbarState.messageInfo.open}
+            closeSnackBar ={()=>{
+                setSnackbarState({
+                  messageInfo:{
+                    open:false,
+                    message:null,
+                    variant:'success'
+                  }
+                })
+              }}
+              variant={snackbarState.messageInfo.variant}
+            autoHideDuration={5000}
+            />}
             <ManageCategoriesComponent
             selectFolder={selectFolder}
             inputs={inputs}

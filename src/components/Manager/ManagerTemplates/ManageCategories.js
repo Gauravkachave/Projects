@@ -56,33 +56,20 @@ const ManageCategories= (props) =>{
             contentLoader,catName,catState,handleExpandClick,handleEdit,
             editDialog,expanded,handleDialog,updateCategory,onUpdateChange} = props;
 
-    // const [editDialog, setEditDialog] = useState(false);
-    // const [expanded, setExpanded] = React.useState(false);
-
-    // const [catName,setCatName]=useState(null);
-    // const [catState,setCatState]=useState(null);
-    // const handleExpandClick = () => { setExpanded(!expanded) };
-    // const handleEdit = (id) => {
-    //     setEditDialog(!editDialog);
-    //         const data=subCategory.find(item => item.cat_id === id );
-    //         setCatName(data.cat_name);
-    //         setCatState(data.cat_state);
-    // }
-
     return (
         <React.Fragment>
             <Span px={4}>
-            <Span display='flex' alignItems='center'>
-                <Typography variant="subtitle2" className={classes.ManageCategoriesTitle}>
-                    Manage Categories
-                </Typography>
-                <Button variant="outlined" 
-                    className={classes.CreateGroupBtn}
-                    component={Link} 
-                    to={'/manager/add-normal-category'}
-                >
+                <Span display='flex' alignItems='center'>
+                    <Typography variant="subtitle2" className={classes.ManageCategoriesTitle}>
+                        Manage Categories
+                    </Typography>
+                    <Button variant="outlined" 
+                        className={classes.CreateGroupBtn}
+                        component={Link} 
+                        to={'/manager/add-normal-category'}
+                    >
                         Add Category
-                </Button>
+                    </Button>
                 </Span>
                 <Span mb={3.7}><Divider /></Span>
                 <Grid container direction="row">
@@ -134,19 +121,17 @@ const ManageCategories= (props) =>{
                                         classes={{ root: classes.TableCellCss }} >
                                             {option.cat_name}
                                     </TableCell>
-
-                                    <TableCell classes={{ root: classes.TableCellEditCss }} onClick={() => { handleEdit(option.cat_id)}}>Edit</TableCell>
-                                    {/* edit dialog */}
-
-                                    {/* ......... */}
-
+                                    <TableCell 
+                                        classes={{ root: classes.TableCellEditCss }} 
+                                        onClick={() => { handleEdit(option.cat_id)}}>
+                                            Edit
+                                    </TableCell>
                                     <TableCell classes={{ root: classes.TableCellCss }}>
-
-                                         {(option.cat_state === 'A') ?
-                                                <FiberManualRecordIcon className={classes.StatusActiveIcon}/> 
-                                                :
-                                                <FiberManualRecordIcon className={classes.StatusInactiveIcon}/>
-                                            }
+                                        {(option.cat_state === 'A') ?
+                                            <FiberManualRecordIcon className={classes.StatusActiveIcon}/> 
+                                            :
+                                            <FiberManualRecordIcon className={classes.StatusInactiveIcon}/>
+                                        }
                                     </TableCell>
                                 </TableRow>
                                 ))
@@ -236,7 +221,7 @@ const ManageCategories= (props) =>{
 
                 {/* ***** */}
                 {/* Mobile View */}
-                <Hidden only={['lg', 'md', 'sm', 'xl']}>
+                {/* <Hidden only={['lg', 'md', 'sm', 'xl']}>
                     <Grid container direction='row'>
                         <Grid item xs={12}>
                             <Card className={classes.GroupCard}>
@@ -262,7 +247,7 @@ const ManageCategories= (props) =>{
                                         <Span display="flex" alignItems="center" justifyContent="center">
                                             <Typography className={classes.editClick} onClick={handleDialog}>Edit</Typography>
                                             {/* edit dialog */}
-                                            <Dialog open={editDialog} fullWidth maxWidth="sm">
+                                            {/* <Dialog open={editDialog} fullWidth maxWidth="sm">
                                                 <DialogContent className={classes.DialogContentPadding}>
                                                     <Typography variant="h6" className={classes.OpenCategory}>
                                                         Update Category
@@ -292,9 +277,9 @@ const ManageCategories= (props) =>{
                                                     </Grid>
                                                     <Button variant="outlined" className={classes.ManageFolderBtn}>Submit</Button>
                                                 </DialogContent>
-                                            </Dialog>
+                                            </Dialog> */}
                                             {/* ......... */}
-                                            <FiberManualRecordIcon className={classes.StatusActiveIcon} />
+                                            {/* <FiberManualRecordIcon className={classes.StatusActiveIcon} />
                                         </Span>
                                     </CardContent>
                                 </Collapse>
@@ -327,8 +312,8 @@ const ManageCategories= (props) =>{
                             </Card>
                         </Grid>
                     </Grid>
-                </Hidden>
-                {/* ........... */}
+                </Hidden> */}
+            
             </Span>
         </React.Fragment>
     )

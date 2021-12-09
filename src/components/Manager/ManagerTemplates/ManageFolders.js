@@ -50,15 +50,12 @@ const styles = (theme) => ({
     CardHeadCss: { alignItems: "flex-start" },
     editClick:{ padding: '0px 16px', fontSize: 13, color: '#fb6e8a', cursor: 'pointer',marginTop:"6px"},   
  },
-
 })
+
 const ManageFolders =(props) =>{
-    const { classes,folders,contentLoader } = props;
-    const [editDialog, setEditDialog] = useState(false)
-    const [expanded, setExpanded] = React.useState(false);
-
-    const handleExpandClick = () => { setExpanded(!expanded) };
-
+    const { classes,folders,contentLoader,handleEdit,editDialog,inputs,handleDialog
+            ,folderState,onUpdateChange,folderName,folderPassword,updateCategory} = props;
+    
     return (
         <React.Fragment>
             <Span px={4}>
@@ -94,10 +91,11 @@ const ManageFolders =(props) =>{
                                     <TableCell classes={{ root: classes.TableCellCss }}>{option.folder_name}</TableCell>
                                     <TableCell classes={{ root: classes.TableCellCss }}>{option.folder_password}</TableCell>
                                     <TableCell 
-                                            classes={{root:classes.TableCellEditCss}} 
-                                        >
+                                        classes={{ root: classes.TableCellEditCss }} 
+                                        onClick={() => { handleEdit(option.id)}}>
                                             Edit
-                                        </TableCell>        
+                                    </TableCell> 
+
                                         <TableCell classes={{root:classes.TableCellCss}}>
                                             {(option.folder_state === 'A') ?
                                                 <FiberManualRecordIcon className={classes.StatusActiveIcon}/> :
@@ -124,7 +122,93 @@ const ManageFolders =(props) =>{
                         </Table>
                     </TableContainer>
                 </Hidden>
-                {/* ........... */}
+            
+                <Dialog open={editDialog} fullWidth maxWidth="sm">
+                    <DialogContent className={classes.DialogContentPadding}>
+                        <Typography variant="h6" className={classes.OpenCategory}>
+                            Update Folder
+                            <IconButton className={classes.OpenCategoryCloseIcon} onClick={handleDialog} ><CloseIcon /></IconButton></Typography>
+                        <Divider />
+                        <Span mt={1} mb={3}>
+                            <Radio 
+                                name='folder_state'
+                                value='A'
+                                classes={{ root: classes.SelectedRadioBtn, checked: classes.SelectedRadioBtn }} 
+                                checked={folderState === 'A' ? true :false} 
+                                onChange={event =>{
+                                    onUpdateChange(
+                                        event.target.name,
+                                        event.target.value
+                                    )
+                                }}
+                                >
+                            </Radio>
+                                
+                            <Typography variant="caption">Active</Typography>
+                            &nbsp;&nbsp;&nbsp;
+                            <Radio 
+                                name='folder_state'
+                                value='I'
+                                classes={{ root: classes.SelectedRadioBtn, checked: classes.SelectedRadioBtn }} 
+                                checked={folderState === 'I' ? true :false}
+                                onChange={event =>{
+                                    onUpdateChange(
+                                        event.target.name,
+                                        event.target.value
+                                    )
+                                }}
+                                />
+                            <Typography variant="caption">Inactive</Typography>
+                        </Span>
+                        <Grid container direction="row">
+                            <Grid item xs={12} sm={12} md={12} lg={12}>
+                                <FormControl fullWidth>
+                                    <TextField
+                                        id="id"
+                                        label="Edit Folder Name"
+                                        type="text"
+                                        variant="outlined"
+                                        name='folder_name'
+                                        value={folderName}
+                                        InputProps={{ classes: { input: classes.textField, }, }}
+                                        InputLabelProps={{ classes: { outlined: classes.cssLabel, shrink: classes.LableShrink } }}
+                                        onChange={event =>{
+                                            onUpdateChange(
+                                                event.target.name,
+                                                event.target.value
+                                            )
+                                        }}
+                                    />
+                                </FormControl>
+                            </Grid>
+                        </Grid>
+                        &nbsp;
+                        <Grid container direction="row">
+                            <Grid item xs={12} sm={12} md={12} lg={12}>
+                                <FormControl fullWidth>
+                                    <TextField
+                                        id="id"
+                                        label="Edit Folder Password"
+                                        type="text"
+                                        variant="outlined"
+                                        name='folder_password'
+                                        value={folderPassword}
+                                        InputProps={{ classes: { input: classes.textField, }, }}
+                                        InputLabelProps={{ classes: { outlined: classes.cssLabel, shrink: classes.LableShrink } }}
+                                        onChange={event =>{
+                                            onUpdateChange(
+                                                event.target.name,
+                                                event.target.value
+                                            )
+                                        }}
+                                    />
+                                </FormControl>
+                            </Grid>
+                        </Grid>
+                        <Button variant="outlined" className={classes.ManageFolderBtn} onClick={updateCategory} >Submit</Button>
+                    </DialogContent>
+                </Dialog>
+
             </Span>
         </React.Fragment>
     )

@@ -90,3 +90,16 @@ export const updateCategoryAPI = (params,signal) => {
     }
     return serviceRequest(url,requestOptions);
 }
+
+export const updateFolderListAPI = (params,signal) => {
+    let url=API_ENDPOINTS.updateFolderList;
+    
+    let requestOptions = {
+        method:'POST',
+        body:JSON.stringify(params),
+        headers:{
+            'session-token' : getSessionToken('session_token')
+        }
+    }
+    return serviceRequest(url,requestOptions);
+}
