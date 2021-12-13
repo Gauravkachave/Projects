@@ -44,7 +44,6 @@ const ManageFolders = () => {
         const handleEdit = (id) => {
             setEditDialog(!editDialog);
             const data=folders.find(item => item.id === id );
-            console.log(data);
             setFolderName(data.folder_name);
             setFolderPassword(data.folder_password);
             setFolderState(data.folder_state);
@@ -58,14 +57,27 @@ const ManageFolders = () => {
 
         const updateCategory = () => {
             let params={
-                'folder_id':inputs['folder_id'],
+                'folder_id':folderId,
                 'folder_name':folderName,
                 'folder_password':folderPassword,
                 'folder_state':folderState,
                 folder_type:'NORMAL'
             }
             updateFolderListAPI(params).then((res)=>{
-                console.log(res);
+                const index = folders.findIndex((value) => value.id === folderId);
+                folders[index] = params;
+                setEditDialog(!editDialog);
+                if(res.success && res.message_code === 10006){
+                    setSnackbarState({
+                        messageInfo:{
+                            open:true,
+                            message:res.message,
+                            variant:'success'
+                        }
+                    })
+                }else{
+                    console.log(res);
+                }
             })
         }
         const onUpdateChange = (input,value) => {
@@ -81,7 +93,22 @@ const ManageFolders = () => {
         }
 
     return ( 
-        <div>
+        <React.Fragment>
+            {snackbarState.messageInfo.open && <Snackbar
+            message={snackbarState.messageInfo.message}
+            open={snackbarState.messageInfo.open}
+            closeSnackBar ={()=>{
+                setSnackbarState({
+                  messageInfo:{
+                    open:false,
+                    message:null,
+                    variant:'success'
+                  }
+                })
+              }}
+              variant={snackbarState.messageInfo.variant}
+            autoHideDuration={5000}
+            />}
         <ManageFoldersComponent
         folders={folders}
         contentLoader={contentLoader}
@@ -96,7 +123,7 @@ const ManageFolders = () => {
         folderPassword={folderPassword}
         updateCategory={updateCategory}
         />
-        </div>
+        </React.Fragment>
      );
 }
 export default ManageFolders;

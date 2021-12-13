@@ -53,8 +53,8 @@ const styles = (theme) => ({
 })
 
 const ManageFolders =(props) =>{
-    const { classes,folders,contentLoader,handleEdit,editDialog,inputs,handleDialog
-            ,folderState,onUpdateChange,folderName,folderPassword,updateCategory} = props;
+    const { classes,folders,contentLoader,handleEdit,editDialog,inputs,handleDialog,
+            folderState,onUpdateChange,folderName,folderPassword,updateCategory} = props;
     
     return (
         <React.Fragment>

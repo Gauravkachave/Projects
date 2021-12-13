@@ -1,8 +1,7 @@
 import React,{useState} from 'react'
-// import Picker from 'emoji-picker-react';
 import Span  from "@material-ui/core/Box";
 import { withStyles, Typography, Divider, Grid, FormControl, TextField, MenuItem, Button, IconButton, Menu, FormHelperText, Tooltip,
-    Dialog, DialogContent, Paper,  Table, TableHead, TableRow, TableBody, TableCell, TableContainer, Hidden, 
+    Dialog, DialogContent, Paper,  Table, TableHead, TableRow, TableBody, TableCell, TableContainer, Hidden, CircularProgress,
 } from '@material-ui/core';
 import ImageIcon from '@material-ui/icons/Image';
 import AttachmentIcon from '@material-ui/icons/Attachment';
@@ -10,7 +9,7 @@ import SentimentSatisfiedOutlinedIcon from '@material-ui/icons/SentimentSatisfie
 import NotInterestedIcon from '@material-ui/icons/NotInterested';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import CloseIcon from '@material-ui/icons/Close';
-// import EditImage from "../../assets/EditImage.jpg";
+import Circularloader from '../../../helper/loaders/CircularLoader';
 
 const styles = (theme) =>({
     AddPTemplateTitle:{fontSize:20, fontWeight:'bold'},
@@ -52,43 +51,11 @@ const styles = (theme) =>({
     ActionLinks:{color:'#fb6e8a !important'},
     AllLinks:{color:'#fb6e8a', textDecoration:'none', cursor:'pointer'}
 })
-const FolderValues = [
-    {value: 'select_folder',label:'Select Folder'},
-    {value: 'texts_to_consultants',label:'Text to Consultants'},
-    {value: 'texts_to_customer',label:'Text to Customers'},
-    {value: 'texts_to_new_leads',label:'Text to New Leads'},
-    {value: 'spanish_texts_to_consultants',label:'Spanish Text to Consultants'},
-    {value: 'days_followup',label:'21 Days Follow Up Script'},
-];
-const CategoryValues = [
-    {value: 'select_category',label:'Select Category'},
-    {value: 'new_consultant_series',label:'New Consultant Series'},
-    {value: 'new_consultant_unit_site',label:'New Consultant w/out Unit Site'},
-    {value: 'new_product_info',label:'New Product Info & Company Contests'},
-    {value: 'consultant_wishes',label:'Consultant Wishes'},
-    {value: 'consultant_status',label:'Consultant Status'},
-    {value: 'motivational',label:'Motivational'},
-    {value: 'challenges',label:'Challenges'},
-    {value: 'canada_status',label:'CANADA - Consultant Status'},
-    {value: 'new_promos',label:'New Products & Company Promos'},
-    {value: 'monthly_challenges',label:'Monthly Challenges - January'},
-    {value: 'prevoius_texts',label:'Previous Texts'},
-    {value: 'keywords',label:'Keywords'},
-    {value: 'star_countdown',label:'Star Countdown'},
-    {value: 'consultant_spanish',label:'Consultant Status Spanish'},
-    {value: 'new_consultant_spn',label:'New Consultant SPN'},
-    {value: 'consultant_status_sp',label:'Consultant Status SP'},
-    {value: 'seasonal',label:'Seasonal'},
-    {value: 'covid',label:'Covid 19'},
-    {value: 'new_consultant_Twenty',label:'New Consultant 2020'},
-    {value: 'nc_texts',label:'NC Texts Sept 2020'},
-];
+
 
 const AddTemplate = (props) => {
-const {classes,inputs,errors,onHandleChange,onCreateTemplateBtn} = props;
-
-const [values, setValues] = useState({ PrivateFolder: 'select_folder',PrivateCategory:'select_category'});
-const handleChange = name => event => {setValues({ ...values, [name]: event.target.value });};
+const {classes,inputs,errors,onHandleChange,onCreateTemplateBtn,
+        onCategoryChange,selectFolder,contentLoader,subCategory} = props;
 
 const [anchorEl, setAnchorEl] = React.useState(null);
 const open = Boolean(anchorEl);
@@ -96,6 +63,7 @@ const handleMenu = (event) => {setAnchorEl(event.currentTarget);};
 const handleClose = () => {setAnchorEl(null);};
 
 const [chosenEmoji, setChosenEmoji] = useState(null);
+const [savedMediaDialogOpen, setSavedMediaDialogOpen] = useState(false);
 const onEmojiClick = (event, emojiObject) => {setChosenEmoji(emojiObject);};
 
 //wildcard section
@@ -121,36 +89,61 @@ const [mediaDialog, setMediaDialog] = React.useState(false);
                                 <FormControl fullWidth>
                                     <TextField
                                         select
-                                        value={values.PrivateFolder}
+                                        name="folder_id"
+                                        value={inputs['folder_id'] || ''}
                                         variant="outlined"
-                                        onChange={handleChange('PrivateFolder')}
                                         InputProps={{ classes: {input: classes.textFieldFolder,},}}
+                                        onChange={event =>{
+                                            onHandleChange(
+                                                event.target.name,
+                                                event.target.value
+                                            )
+                                        }}
                                     >
-                                        {FolderValues.map(option => (
-                                            <MenuItem key={option.value} value={option.value}>
-                                                {option.label}
-                                            </MenuItem>
+                                    <MenuItem value={0}>
+                                        Select Folder
+                                    </MenuItem>
+                                    {selectFolder && selectFolder.map(option => (
+                                    (option.folder_state === 'A') &&
+                                    <MenuItem key={option.id} value={option.id}>
+                                    {option.folder_name}
+                                </MenuItem>
                                         ))}
                                     </TextField>
-                                    <FormHelperText error>{errors['select_folder']}</FormHelperText>
+                                    <FormHelperText error>{errors['folder_id']}</FormHelperText>
                                 </FormControl>
                             </Grid>
+
                             <Grid item xs={12} sm={6} md={6} lg={6}>
                                 <FormControl fullWidth>
                                     <TextField
                                         select
-                                        value={values.PrivateCategory}
+                                        name='cat_id'
+                                        value={inputs['cat_id'] || ''}
                                         variant="outlined"
-                                        onChange={handleChange('PrivateCategory')}
+                                        onChange={event =>{
+                                            onHandleChange(
+                                                event.target.name,
+                                                event.target.value
+                                            )
+                                        }}
                                         InputProps={{ classes: {input: classes.textFieldFolder,},}}
                                     >
-                                        {CategoryValues.map(option => (
-                                            <MenuItem key={option.value} value={option.value}>
-                                                {option.label}
-                                            </MenuItem>
-                                        ))}
+                                    <MenuItem value={0}>
+                                        Select Category
+                                    </MenuItem>
+                                {(subCategory && subCategory.length > 0) ? 
+                                    subCategory.map((option, index) => (
+                                        <MenuItem key={option.cat_id} value={option.cat_id}>
+                                            {option.cat_name}
+                                        </MenuItem>
+                                    ))
+                                    :
+                                    <Span>No subcategories found .</Span>
+                                }
+
                                     </TextField>
-                                    <FormHelperText error>{errors['select_category']}</FormHelperText>
+                                    {/* <FormHelperText error>{errors['cat_id']}</FormHelperText> */}
                                 </FormControl>
                             </Grid>
                         </Grid>
@@ -158,12 +151,12 @@ const [mediaDialog, setMediaDialog] = React.useState(false);
                         <Grid item xs={12} sm={12} md={12} lg={12}>
                             <FormControl fullWidth>
                                 <TextField
-                                    id="temp_name"
+                                    id="tmpl_name"
                                     label="Name"
                                     type="text"
                                     variant="outlined"
-                                    name='temp_name'
-                                    value={inputs['temp_name' || '']}
+                                    name='tmpl_name'
+                                    value={inputs['tmpl_name' || '']}
                                     InputProps={{ classes: {input: classes.textField,},}}
                                     InputLabelProps={{classes:{outlined:classes.cssLabel,shrink:classes.LableShrink}}}
                                     onChange={event =>{
@@ -174,7 +167,7 @@ const [mediaDialog, setMediaDialog] = React.useState(false);
                                     }}
                                 />
                                 <FormHelperText error>
-                                     {errors['temp_name']}
+                                     {errors['tmpl_name']}
                                      </FormHelperText>
                                 <Typography variant="caption" className={classes.NameInputHelperText}>
                                     Give your template a descriptive name that will be used to identify reports and responses.
@@ -187,12 +180,12 @@ const [mediaDialog, setMediaDialog] = React.useState(false);
                             <div className={classes.MessageInputContainer}>
                                 <FormControl fullWidth>
                                     <TextField
-                                        id="temp_message"
+                                        id="tmpl_message"
                                         label="Message"
                                         type="text"
                                         variant="outlined"
-                                        name='temp_message'
-                                        value={inputs['temp_message']}
+                                        name='tmpl_message'
+                                        value={inputs['tmpl_message']}
                                         multiline
                                         rows={3}
                                         InputProps={{ classes: {input: classes.textFieldMessage,multiline: classes.MultitlineInput,},}}
@@ -204,9 +197,6 @@ const [mediaDialog, setMediaDialog] = React.useState(false);
                                             )
                                         }}
                                     />
-                                    {/* <FormHelperText error>
-                                     {errors['temp_name']}
-                                     </FormHelperText> */}
                                     <Typography variant="caption" className={classes.NameInputHelperText}>
                                         Max image file size 5 MB (images only) and 500Kb for other media files. Be sure to do a test send
                                         with all new images.
@@ -359,14 +349,21 @@ const [mediaDialog, setMediaDialog] = React.useState(false);
                                     <Typography variant="caption" className={classes.RemaingLetters}> 600 | 600</Typography>
                                 </div>
                                 <FormHelperText error>
-                                     {errors['temp_message']}
+                                     {errors['tmpl_message']}
                                      </FormHelperText>
                             </div>
                             {/* ................... */}
                         </Grid>
                     </Grid>
                 </Grid>
-                <Button variant="outlined" className={classes.CreateTempBtn} onClick={onCreateTemplateBtn}>Create Template</Button>
+                <Button 
+                    variant="outlined" 
+                    className={classes.CreateTempBtn} 
+                    onClick={onCreateTemplateBtn}
+                >
+                        Create Template
+                        {contentLoader && <Circularloader/>}
+                </Button>
             </Span>
         </React.Fragment>
     )

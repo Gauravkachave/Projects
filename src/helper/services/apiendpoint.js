@@ -12,8 +12,10 @@ export const API_ENDPOINTS = {
     getFolderList : API_GATEWAY_URL + 'folderList',
     updateFolderList : API_GATEWAY_URL + 'update_folder',
     listAllFolder : API_GATEWAY_URL + 'listAllFolder',
+    addTemplate : API_GATEWAY_URL + 'template/add',
     addCategory : API_GATEWAY_URL + 'addCategory',
     listAllCategory :  API_GATEWAY_URL + 'category/listAll',
     updateCategory : API_GATEWAY_URL + 'updateCategory',
+    
     
 }

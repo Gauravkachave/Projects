@@ -103,3 +103,16 @@ export const updateFolderListAPI = (params,signal) => {
     }
     return serviceRequest(url,requestOptions);
 }
+
+export const addTemplateAPI = (params,signal) => {
+    let url=API_ENDPOINTS.addTemplate;
+    
+    let requestOptions = {
+        method:'POST',
+        body:JSON.stringify(params),
+        headers:{
+            'session-token' : getSessionToken('session_token')
+        }
+    }
+    return serviceRequest(url,requestOptions);
+}
