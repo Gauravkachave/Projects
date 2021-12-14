@@ -116,3 +116,23 @@ export const addTemplateAPI = (params,signal) => {
     }
     return serviceRequest(url,requestOptions);
 }
+
+
+export const templateListAPI= (params,signal) => {
+    let url=API_ENDPOINTS.templateList;
+
+    Object.entries(params).forEach(([key, val])=>{
+        if(key === 'tmpl_type')
+            url+=`?${key}=${val}`;
+        else 
+            url+=`&${key}=${val}`;
+    });
+
+    let requestOptions = {
+        method:'GET',
+        headers:{
+            'session-token' : getSessionToken('session_token')
+        }
+    }
+    return serviceRequest(url,requestOptions);
+}

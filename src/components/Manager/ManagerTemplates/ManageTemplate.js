@@ -31,52 +31,19 @@ const styles = (theme) => ({
     GroupName: { cursor: 'pointer', fontSize: "12px",marginTop:"12px"},
     CardHeadCss: { alignItems: "flex-start" },
 })
-const FolderValues = [
-    { value: 'select_folder', label: 'Select Folder' },
-    { value: 'texts_to_consultants', label: 'Text to Consultants' },
-    { value: 'texts_to_customer', label: 'Text to Customers' },
-    { value: 'texts_to_new_leads', label: 'Text to New Leads' },
-    { value: 'spanish_texts_to_consultants', label: 'Spanish Text to Consultants' },
-    { value: 'days_followup', label: '21 Days Follow Up Script' },
-];
-const CategoryValues = [
-    { value: 'select_category', label: 'Select Category' },
-    { value: 'new_consultant_series', label: 'New Consultant Series' },
-    { value: 'new_consultant_unit_site', label: 'New Consultant w/out Unit Site' },
-    { value: 'new_product_info', label: 'New Product Info & Company Contests' },
-    { value: 'consultant_wishes', label: 'Consultant Wishes' },
-    { value: 'consultant_status', label: 'Consultant Status' },
-    { value: 'motivational', label: 'Motivational' },
-    { value: 'challenges', label: 'Challenges' },
-    { value: 'canada_status', label: 'CANADA - Consultant Status' },
-    { value: 'new_promos', label: 'New Products & Company Promos' },
-    { value: 'monthly_challenges', label: 'Monthly Challenges - January' },
-    { value: 'prevoius_texts', label: 'Previous Texts' },
-    { value: 'keywords', label: 'Keywords' },
-    { value: 'star_countdown', label: 'Star Countdown' },
-    { value: 'consultant_spanish', label: 'Consultant Status Spanish' },
-    { value: 'new_consultant_spn', label: 'New Consultant SPN' },
-    { value: 'consultant_status_sp', label: 'Consultant Status SP' },
-    { value: 'seasonal', label: 'Seasonal' },
-    { value: 'covid', label: 'Covid 19' },
-    { value: 'new_consultant_Twenty', label: 'New Consultant 2020' },
-    { value: 'nc_texts', label: 'NC Texts Sept 2020' },
-];
 
 const ManagePrivateTemplate= (props)=> {
-    const { classes } = props;
-    const [values, setValues] = useState({ Timezone: 'texts_to_consultants', PrivateCategory: 'new_consultant_series' })
+    const { classes, inputs, folderList, categoryList, contentLoader,handleChange,templateList
+        ,folderId,catId,
+    } = props;
 
-    const handleChange = name => event => {
-        setValues({ ...values, [name]: event.target.value });
-    };
     const [expanded, setExpanded] = React.useState(false);
     const handleExpandClick = () => { setExpanded(!expanded) };
     return (
         <React.Fragment>
             <Span px={4} py={3}>
                 <Typography variant="subtitle2" className={classes.ManageCategoriesTitle}>
-                    Manage Private Templates
+                    Manage Templates
                 </Typography>
                 <Span mb={3.7}><Divider /></Span>
                 <Grid container direction="row">
@@ -87,18 +54,28 @@ const ManagePrivateTemplate= (props)=> {
                                     <Typography variant="caption">Folder</Typography>
                                     <TextField
                                         select
-                                        value={values.Timezone}
+                                        name="folder_id"
+                                        value={folderId || ''}
                                         variant="outlined"
-                                        onChange={handleChange('Timezone')}
+                                        onChange={event =>{
+                                            handleChange(
+                                                event.target.name,
+                                                event.target.value
+                                            )
+                                        }}
                                         InputProps={{ classes: { input: classes.textFieldFolder, }, }}
                                     >
-                                        {FolderValues.map(option => (
-                                            <MenuItem key={option.value} value={option.value}>
-                                                {option.label}
-                                            </MenuItem>
+                                        <MenuItem value={0}>
+                                        Select Folder
+                                        </MenuItem>
+
+                                       {folderList && folderList.map(option => (
+                                            (option.folder_state === 'A') &&
+                                        <MenuItem key={option.id} value={option.id}>
+                                            {option.folder_name}
+                                        </MenuItem>
                                         ))}
                                     </TextField>
-                                    <FormHelperText error>Error here...</FormHelperText>
                                 </FormControl>
                             </Grid>
                             <Grid item xs={12} sm={6} md={6} lg={6}>
@@ -106,18 +83,31 @@ const ManagePrivateTemplate= (props)=> {
                                     <Typography variant="caption">Category</Typography>
                                     <TextField
                                         select
-                                        value={values.PrivateCategory}
+                                        name="cat_id"
+                                        value={catId || '' }
                                         variant="outlined"
-                                        onChange={handleChange('PrivateCategory')}
+                                        onChange={event =>{
+                                            handleChange(
+                                                event.target.name,
+                                                event.target.value
+                                            )
+                                        }}
                                         InputProps={{ classes: { input: classes.textFieldFolder, }, }}
                                     >
-                                        {CategoryValues.map(option => (
-                                            <MenuItem key={option.value} value={option.value}>
-                                                {option.label}
+                                        <MenuItem value={0}>
+                                        Select Category
+                                        </MenuItem>
+                                        {(categoryList && categoryList.length > 0) ? 
+                                        categoryList.map((option, index) => (
+                                            <MenuItem key={option.cat_id} value={option.cat_id}>
+                                                {option.cat_name}
                                             </MenuItem>
-                                        ))}
+                                        ))
+                                        :
+                                        <Span>No subcategories found .</Span>
+                                        }
+
                                     </TextField>
-                                    <FormHelperText error>Error here...</FormHelperText>
                                 </FormControl>
                             </Grid>
                         </Grid>
@@ -135,17 +125,11 @@ const ManagePrivateTemplate= (props)=> {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
+                                {(templateList && templateList.length > 0)  ? 
+                                templateList.map((option,index)=>(
                                 <TableRow>
-                                    <TableCell classes={{ root: classes.TableCellCss }}>Month 2 - Inventory if they have not placed order</TableCell>
-                                    <TableCell classes={{ root: classes.TableCellCss }}>
-                                        <Span display="flex" alignItems="center" className={classes.ImageContainer}>
-                                            {/* <div><img className={classes.AllImages} src={EditImage} /></div> */}
-                                            <div>
-                                                Hurry, before it is too late. I do not want you to miss your last opportunity to receive tons of FREE MK Product as a New Consultant.
-                                                This is an important decision, so please contact me and we can discuss what option is best for you. With Excitement and Belief, <a href="#" className={classes.AllLinks}>http://bit.ly/2v4dkcn</a>
-                                            </div>
-                                        </Span>
-                                    </TableCell>
+                                    <TableCell classes={{ root: classes.TableCellCss }}>{option.tmpl_name}</TableCell>
+                                    <TableCell classes={{ root: classes.TableCellCss }}>{option.tmpl_message}</TableCell>
                                     <TableCell classes={{ root: classes.TableCellCss }}>
                                         <Button variant="contained" size="small" className={classes.ActionButns}>
                                             <FontAwesomeIcon icon={faEdit} />
@@ -155,173 +139,16 @@ const ManagePrivateTemplate= (props)=> {
                                         </Button>
                                     </TableCell>
                                 </TableRow>
-                                <TableRow>
-                                    <TableCell classes={{ root: classes.TableCellCss }}>Day 7 - MKU</TableCell>
-                                    <TableCell classes={{ root: classes.TableCellCss }}>
-                                        Your future is bright - I know U have lots of questions. Be patient with yourself and be a good student.
-                                        Start on-line training by logging into www.marykayintouch.com and go to MKUniversity.
-                                        Let me know when U are done with all the steps so I can get you your SHADES.
-                                    </TableCell>
-                                    <TableCell classes={{ root: classes.TableCellCss }}>
-                                        <Button variant="contained" size="small" className={classes.ActionButns}>
-                                            <FontAwesomeIcon icon={faEdit} />
-                                        </Button>
-                                        <Button variant="contained" size="small" className={classes.ActionButns}>
-                                            <FontAwesomeIcon icon={faTrashAlt} />
-                                        </Button>
-                                    </TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell classes={{ root: classes.TableCellCss }}>Day 2 - Get Down to Business w/ WEBSITE</TableCell>
-                                    <TableCell classes={{ root: classes.TableCellCss }}>
-                                        <Span display="flex" alignItems="center" className={classes.ImageContainer}>
-                                            {/* <div><img className={classes.AllImages} src={FlowerImage} /></div> */}
-                                            <div>
-                                                Get your new MK Business off to a great start when you complete the next challenge - Get Down to Business.
-                                                I am here to support you in making it both enjoyable and profitable. Click below for your next steps and to
-                                                earn another gift. Cheering you on, (www.websiteaddress.com)
-                                            </div>
-                                        </Span>
-                                    </TableCell>
-                                    <TableCell classes={{ root: classes.TableCellCss }}>
-                                        <Button variant="contained" size="small" className={classes.ActionButns}>
-                                            <FontAwesomeIcon icon={faEdit} />
-                                        </Button>
-                                        <Button variant="contained" size="small" className={classes.ActionButns}>
-                                            <FontAwesomeIcon icon={faTrashAlt} />
-                                        </Button>
-                                    </TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell classes={{ root: classes.TableCellCss }}>Day 0 - Beat the Box w/ WEBSITE</TableCell>
-                                    <TableCell classes={{ root: classes.TableCellCss }}>
-                                        Hello, this is ______, your MK Director. I want to congratulate you on your new business journey.
-                                        Complete the Beat the Box challenge and receive a gift. Click below. Call or text me at _________ and we can set a time to chat.
-                                        With Joy, (www.websiteaddress.com)
-                                    </TableCell>
-                                    <TableCell classes={{ root: classes.TableCellCss }}>
-                                        <Button variant="contained" size="small" className={classes.ActionButns}>
-                                            <FontAwesomeIcon icon={faEdit} />
-                                        </Button>
-                                        <Button variant="contained" size="small" className={classes.ActionButns}>
-                                            <FontAwesomeIcon icon={faTrashAlt} />
-                                        </Button>
-                                    </TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell classes={{ root: classes.TableCellCss }}>Day 1 - Join FB</TableCell>
-                                    <TableCell classes={{ root: classes.TableCellCss }}>
-                                        We are so excited to have you as part of our group, please join our Facebook Private group to get the latest news,
-                                        upcoming events, recognition and training. CLICK BELOW to join, then click on the JOIN Button. xoxo
-                                    </TableCell>
-                                    <TableCell classes={{ root: classes.TableCellCss }}>
-                                        <Button variant="contained" size="small" className={classes.ActionButns}>
-                                            <FontAwesomeIcon icon={faEdit} />
-                                        </Button>
-                                        <Button variant="contained" size="small" className={classes.ActionButns}>
-                                            <FontAwesomeIcon icon={faTrashAlt} />
-                                        </Button>
-                                    </TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell classes={{ root: classes.TableCellCss }}>Day 2 Get Down to Busines</TableCell>
-                                    <TableCell classes={{ root: classes.TableCellCss }}>
-                                        Get your new MK Business off to a great start when you complete the next challenge - Get Down to Business.
-                                        I am here to support you in making it both enjoyable and profitable. Click below for your next steps and to earn another gift.
-                                        Cheering you on, <a href="#" className={classes.AllLinks}>http://bit.ly/2v9yrtC</a>
-                                    </TableCell>
-                                    <TableCell classes={{ root: classes.TableCellCss }}>
-                                        <Button variant="contained" size="small" className={classes.ActionButns}>
-                                            <FontAwesomeIcon icon={faEdit} />
-                                        </Button>
-                                        <Button variant="contained" size="small" className={classes.ActionButns}>
-                                            <FontAwesomeIcon icon={faTrashAlt} />
-                                        </Button>
-                                    </TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell classes={{ root: classes.TableCellCss }}>Day 0 - Beat the Box</TableCell>
-                                    <TableCell classes={{ root: classes.TableCellCss }}>
-                                        Hello, this is ______, your MK Director. I want to congratulate you on your new business journey.
-                                        Complete the Beat the Box challenge and you will receive a gift. Click below.
-                                        Call or text me at _________ and we can set a time to chat. With Joy, <a href="#" className={classes.AllLinks}>http://bit.ly/2Lpkl29</a>
-                                    </TableCell>
-                                    <TableCell classes={{ root: classes.TableCellCss }}>
-                                        <Button variant="contained" size="small" className={classes.ActionButns}>
-                                            <FontAwesomeIcon icon={faEdit} />
-                                        </Button>
-                                        <Button variant="contained" size="small" className={classes.ActionButns}>
-                                            <FontAwesomeIcon icon={faTrashAlt} />
-                                        </Button>
-                                    </TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell classes={{ root: classes.TableCellCss }}>Day 14 - Booking Tips</TableCell>
-                                    <TableCell classes={{ root: classes.TableCellCss }}>
-                                        Booking appointments is the lifeline to your new business. Here are the magic words to booking your
-                                        appointments. <a href="#" className={classes.AllLinks}>http://bit.ly/2D7NGtG</a>
-                                    </TableCell>
-                                    <TableCell classes={{ root: classes.TableCellCss }}>
-                                        <Button variant="contained" size="small" className={classes.ActionButns}>
-                                            <FontAwesomeIcon icon={faEdit} />
-                                        </Button>
-                                        <Button variant="contained" size="small" className={classes.ActionButns}>
-                                            <FontAwesomeIcon icon={faTrashAlt} />
-                                        </Button>
-                                    </TableCell>
-                                </TableRow>
+                                ))
+                             : 
+                             <Span>
+                                 data not found
+                             </Span>
+}
                             </TableBody>
                         </Table>
                     </TableContainer>
                 </Hidden>
-                {/* Mobile View */}
-                <Hidden only={['lg', 'md', 'sm', 'xl']}>
-                    <Grid container direction='row'>
-                        <Grid item xs={12}>
-                            <Card className={classes.GroupCard}>
-                                <CardHeader className={classes.CardHeadCss}
-                                    avatar={
-                                        <Span display="flex" alignItems="center">
-                                            <Avatar className={classes.GroupAvatar}>
-                                                <FontAwesomeIcon icon={faUsers} />
-                                            </Avatar>
-                                        </Span>
-                                    }
-                                    action={
-                                        <IconButton onClick={handleExpandClick}>
-                                            {(expanded) ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
-                                        </IconButton>
-                                    }
-                                    title={<div className={classes.GroupName}>Name : Day 7 - MKU</div>}
-                                />
-                                <Collapse in={expanded} timeout="auto" unmountOnExit>
-                                    <CardContent className={classes.CardContentPadding}>
-                                        <Span><Divider /></Span>
-                                        <Span display="flex" alignItems="center" justifyContent="center" mt={1}>
-                                            <Span display="flex" alignItems="center" className={classes.ImageContainer}>
-                                                {/* <div><img className={classes.AllImages} src={EditImage} /></div> */}
-                                                <div>
-                                                    Hurry, before it is too late. I do not want you to miss your last opportunity to receive tons of FREE MK Product as a New Consultant.
-                                                    This is an important decision, so please contact me and we can discuss what option is best for you. With Excitement and Belief, <a href="#" className={classes.AllLinks}>http://bit.ly/2v4dkcn</a>
-                                                </div>
-                                            </Span>
-                                        </Span>
-                                        <Span display="flex" justifyContent="center">
-                                        <Button variant="contained" size="small" className={classes.ActionButns}>
-                                            <FontAwesomeIcon icon={faEdit} />
-                                        </Button>
-                                        <Button variant="contained" size="small" className={classes.ActionButns}>
-                                            <FontAwesomeIcon icon={faTrashAlt} />
-                                        </Button>
-                                        </Span>
-
-                                    </CardContent>
-                                </Collapse>
-                            </Card>
-                        </Grid>
-                    </Grid>
-                </Hidden>
-                {/* ........... */}
             </Span>
         </React.Fragment>
     )
