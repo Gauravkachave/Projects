@@ -112,6 +112,24 @@ const ManagerSubmenu = (props) => {
                     </ListItem>
                     </List>
                     </Collapse>
+
+                    <Collapse in={manageTemplate} timeout="auto" unmountOnExit>
+                        <List component="div" disablePadding>
+                    <ListItem 
+                        button 
+                        className={classes.SublistContainerPadding}
+                        component={NavLink}
+                        to="/manager/edit-normal-template"
+                        onClick={()=>{closeSubNavigation()}}
+                    >
+                        {/* <ListItemIcon classes={{root:classes.ListIconContainer}}>
+                            <ListItemIcon classes={{root:classes.ListSubmenuIconArrow}}><FontAwesomeIcon icon={faLongArrowAltRight} /></ListItemIcon>                           
+                        </ListItemIcon> */}
+                        {/* <ListItemText classes={{primary:classes.ListTitle}} primary="Manage Folder" /> */}
+                    </ListItem>
+                    </List>
+                    </Collapse>
+
                 </List>
             </Drawer>
         </React.Fragment>

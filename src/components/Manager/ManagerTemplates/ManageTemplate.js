@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import Span from "@material-ui/core/Box";
 import {
-    withStyles, Typography, Divider, Table, TableHead, TableRow, TableBody, TableCell, TableContainer,
+    withStyles, Typography, Divider, Table, TableHead, TableRow, TableBody, TableCell, TableContainer,CircularProgress,
     Paper, FormControl, TextField, Grid, Button, MenuItem, FormHelperText, Hidden, Card, CardContent, CardHeader, Avatar, Collapse, IconButton
 } from '@material-ui/core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -131,7 +132,8 @@ const ManagePrivateTemplate= (props)=> {
                                     <TableCell classes={{ root: classes.TableCellCss }}>{option.tmpl_name}</TableCell>
                                     <TableCell classes={{ root: classes.TableCellCss }}>{option.tmpl_message}</TableCell>
                                     <TableCell classes={{ root: classes.TableCellCss }}>
-                                        <Button variant="contained" size="small" className={classes.ActionButns}>
+
+                                        <Button variant="contained" size="small" className={classes.ActionButns} component={Link} to ={`/manager/edit-normal-template/${option.tmpl_id}`} >
                                             <FontAwesomeIcon icon={faEdit} />
                                         </Button>
                                         <Button variant="contained" size="small" className={classes.ActionButns}>
@@ -141,10 +143,19 @@ const ManagePrivateTemplate= (props)=> {
                                 </TableRow>
                                 ))
                              : 
-                             <Span>
-                                 data not found
+                             <TableRow>
+                             <TableCell align="center" colSpan="4">
+                             {(contentLoader) 
+                             ? 
+                             <Span align="center">
+                                 <CircularProgress size={22} color='secondary'/>
                              </Span>
-}
+                             :
+                                 <Span>Data Not Found.</Span>
+                             }
+                             </TableCell>
+                         </TableRow>
+                            }
                             </TableBody>
                         </Table>
                     </TableContainer>
@@ -155,3 +166,5 @@ const ManagePrivateTemplate= (props)=> {
 }
 
 export default withStyles(styles)(ManagePrivateTemplate);
+
+

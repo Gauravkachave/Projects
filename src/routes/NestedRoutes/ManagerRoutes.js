@@ -29,6 +29,10 @@ const AddCategory = Loader (()=>
 import ('../../containers/Manager/ManagerTemplates/AddCategory'),
 );
 
+const EditNormalTemplate = Loader (()=>
+import ('../../containers/Manager/ManagerTemplates/EditNormalTemplate'),
+);
+
 const ManagerRoutes = (props) => {
 const { match } =props;
     return ( 
@@ -90,6 +94,16 @@ const { match } =props;
                     layout={dashboardLayout}
                     type='private'
                     title='Manager | ManageCategory | AddCategory'
+                />
+
+                <AppRoute
+                    exact={true}
+                    path={`${match.path}/edit-normal-template/:id`}
+                    component={EditNormalTemplate}
+                    requireAuth={auth}
+                    layout={dashboardLayout}
+                    type='private'
+                    title='Manager | ManageCategory | EditTemplate'
                 />
 
             </Switch>
