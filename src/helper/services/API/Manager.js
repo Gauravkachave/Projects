@@ -150,3 +150,16 @@ export const templateDetailsAPI= (params,signal) => {
     }
     return serviceRequest(url,requestOptions);
 }
+
+export const updateTemplateAPI = (params,signal) => {
+    let url=API_ENDPOINTS.updateTemplate;
+    
+    let requestOptions = {
+        method:'POST',
+        body:JSON.stringify(params),
+        headers:{
+            'session-token' : getSessionToken('session_token')
+        }
+    }
+    return serviceRequest(url,requestOptions);
+}

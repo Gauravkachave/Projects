@@ -35,7 +35,7 @@ const styles = (theme) => ({
 
 const ManagePrivateTemplate= (props)=> {
     const { classes, inputs, folderList, categoryList, contentLoader,handleChange,templateList
-        ,folderId,catId,
+        ,folderId,catId
     } = props;
 
     const [expanded, setExpanded] = React.useState(false);
@@ -66,7 +66,7 @@ const ManagePrivateTemplate= (props)=> {
                                         }}
                                         InputProps={{ classes: { input: classes.textFieldFolder, }, }}
                                     >
-                                        <MenuItem value={0}>
+                                        <MenuItem value='0'>
                                         Select Folder
                                         </MenuItem>
 
@@ -85,7 +85,7 @@ const ManagePrivateTemplate= (props)=> {
                                     <TextField
                                         select
                                         name="cat_id"
-                                        value={catId || '' }
+                                        value={catId || ''}
                                         variant="outlined"
                                         onChange={event =>{
                                             handleChange(
@@ -95,19 +95,14 @@ const ManagePrivateTemplate= (props)=> {
                                         }}
                                         InputProps={{ classes: { input: classes.textFieldFolder, }, }}
                                     >
-                                        <MenuItem value={0}>
+                                        <MenuItem value='0'>
                                         Select Category
                                         </MenuItem>
-                                        {(categoryList && categoryList.length > 0) ? 
-                                        categoryList.map((option, index) => (
-                                            <MenuItem key={option.cat_id} value={option.cat_id}>
-                                                {option.cat_name}
-                                            </MenuItem>
-                                        ))
-                                        :
-                                        <Span>No subcategories found .</Span>
-                                        }
-
+                                        {categoryList && categoryList.map(option => (
+                                        <MenuItem key={option.cat_id} value={option.cat_id}>
+                                            {option.cat_name}
+                                        </MenuItem>
+                                        ))}
                                     </TextField>
                                 </FormControl>
                             </Grid>
@@ -128,7 +123,7 @@ const ManagePrivateTemplate= (props)=> {
                             <TableBody>
                                 {(templateList && templateList.length > 0)  ? 
                                 templateList.map((option,index)=>(
-                                <TableRow>
+                                <TableRow key={index}>
                                     <TableCell classes={{ root: classes.TableCellCss }}>{option.tmpl_name}</TableCell>
                                     <TableCell classes={{ root: classes.TableCellCss }}>{option.tmpl_message}</TableCell>
                                     <TableCell classes={{ root: classes.TableCellCss }}>

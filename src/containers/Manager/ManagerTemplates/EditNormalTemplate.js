@@ -1,7 +1,7 @@
 import React,{useState,useEffect} from 'react';
 import EditNormalTemplateComponent from '../../../components/Manager/ManagerTemplates/EditNormalTemplate';
 import Snackbar from '../../../components/Snackbar/Snackbar';
-import {templateDetailsAPI,listAllFolderAPI,listAllCategoryAPI} from '../../../helper/services/API/Manager';
+import {templateDetailsAPI,listAllFolderAPI,listAllCategoryAPI,updateTemplateAPI} from '../../../helper/services/API/Manager';
 
 
 const EditNormalTemplate = (props) => {
@@ -12,8 +12,6 @@ const EditNormalTemplate = (props) => {
     const [errors,setErrors]=useState({});
     const [btnLoader,setBtnLoader]=useState(false);
     const [folderList,setFolderList]=useState(null);
-    // const [folderId,setFolderId]=useState(null);
-    // const [catId,setCatId]=useState(null);
     const [categoryList,setCategoryList]=useState(null);
     const[snackbarState,setSnackbarState]=useState({
         messageInfo:{
@@ -22,52 +20,15 @@ const EditNormalTemplate = (props) => {
             variant:'success'
         }
     });
-
-// useEffect(()=>{
-//     let tempParams={
-//         tmpl_id :tmpl_id
-//     }
-//     templateDetailsAPI(tempParams).then((res)=>{
-//         if(res.success && res.message_code === 10010){
-//                 setInputs({
-//                     ...inputs,
-//                     tmpl_name:res.data.tmpl_name,
-//                     tmpl_message:res.data.tmpl_message,
-//                     cat_id:res.data.tmpl_cat_id,
-//                     folder_id:res.data.tmpl_folder_id,
-
-//                     });
-//                     setFolderId(res.data.tmpl_folder_id);
-//                     // setCatId(res.data.cat_name);
-//             }else{
-//                 console.log(res);
-//             }
-//         })
-
-//     let params={
-//         folder_type:'NORMAL'
-//     }
-//     listAllFolderAPI(params).then((res)=>{
-//         if(res.success && res.message_code === 10005){
-//             setFolderList(res.data);
-//             // setFolderId(res.data[0].id);
-//         }
-
-//     let catParams={folder_id:folderId};
-//     listAllCategoryAPI(catParams).then((res)=>{
-//         if(res.success && res.message_code ===10017){
-//             setCategoryList(res.data);
-//             setCatId(res.data[0].cat_id);
-//         }
-//     })
-//     });
-//     },[]);
+    let folderId;
 
 const editTemplateDetails = async() => {
     let params = {
         tmpl_id :tmpl_id
-    }
-            templateDetailsAPI(params).then((res)=>{
+    }    
+    setBtnLoader(true);
+            await templateDetailsAPI(params).then((res)=>{
+                setBtnLoader(false);
                 if(res.success && res.message_code === 10010){
                         setInputs({
                             ...inputs,
@@ -76,11 +37,14 @@ const editTemplateDetails = async() => {
                             cat_id:res.data.tmpl_cat_id,
                             folder_id:res.data.tmpl_folder_id,
                             });
-                            // setFolderId(res.data.tmpl_folder_id);
+                            folderId=res.data.tmpl_folder_id;
                     }else{
                         console.log(res);
                     }
                 })
+                let initialFolderId = folderId;
+                let categoryListData = await getCategoryList(initialFolderId);
+                setCategoryList(categoryListData);                
 }
 
 const getFolderList = async() => {
@@ -94,10 +58,9 @@ const getFolderList = async() => {
 }
 
 const getCategoryList = async(folderId) => {
-    console.log(folderId);
     try {
         let categoryList = await listAllCategoryAPI({ folder_id: folderId });
-        if(categoryList.success && categoryList.data){ return categoryList.data; }
+        if(categoryList.success && categoryList.data){ return categoryList.data;}
         else { return []; }
     } catch (error) {
         throw error;
@@ -108,10 +71,6 @@ useEffect(() => {
     (async () => {
         let folderListData = await getFolderList();
         setFolderList(folderListData);
-         
-        let initialFolderId = folderListData[0].id;
-        let categoryListData = await getCategoryList(initialFolderId);
-        setCategoryList(categoryListData);
          await editTemplateDetails();
     })
     ().catch(err => {
@@ -119,22 +78,18 @@ useEffect(() => {
     });
 }, []);
 
-
-
-
-
-
     const handleChange = (input,value) => {
-        if(input === 'folder_id'){
+        if(input === 'folder_id' && value !== '0'){
             let folderId = value;
             (async () => {
                 let categoryListData = await getCategoryList(folderId);
                 setCategoryList(categoryListData);
             })().catch(err => { console.error('Caught error while getting category list ',err); });
             inputs[input] = value;
-            inputs['cat_id'] = 0;
+            inputs['cat_id'] = '0';
         }
-        else {
+        else if(input === 'cat_id' && value !== '0'){
+            setInputs(value);
             inputs[input] = value;
         }
         let isError = '';
@@ -149,7 +104,7 @@ useEffect(() => {
     const handleValidation = () => {
         let isValid=true;
         let error=errors;
-        let errordata=['tmpl_name','tmpl_message','cat_name','folder_name'];
+        let errordata=['tmpl_name','tmpl_message'];
 
         errordata.forEach(value => {
             if(!inputs[value] || !inputs[value].trim()){
@@ -161,6 +116,19 @@ useEffect(() => {
         return isValid;
     }
 
+    const onUpdateBtn = () => {
+        // if(handleValidation()){
+            let params={
+                tmpl_id:parseInt(tmpl_id),
+                ...inputs,
+            }
+            console.log(params);
+            updateTemplateAPI(params).then((res) => {
+                console.log(res);
+            })
+        // }
+    }
+
     return ( 
         <React.Fragment>
             <EditNormalTemplateComponent
@@ -168,11 +136,9 @@ useEffect(() => {
             errors={errors}
             btnLoader={btnLoader}
             handleChange={handleChange}
-            // folderId={folderId}
-            // catId={catId}
             folderList={folderList}
             categoryList={categoryList}
-            
+            onUpdateBtn={onUpdateBtn}
             />
         </React.Fragment>
      );

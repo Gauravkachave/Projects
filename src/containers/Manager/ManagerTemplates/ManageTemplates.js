@@ -54,16 +54,20 @@ const ManageTemplates = () => {
     }
 
     const handleChange = (input,value) => {
-        if(input === 'folder_id'){
+        if(input === 'folder_id' && value !== '0'){
             setFolderId(value);
 
             let catParams = {
                 folder_id:value
             }
             listAllCategoryAPI(catParams).then((res)=>{
-                if(res.success){
+                if(res.success && res.message_code === 10017){
                     setCategoryList(res.data);
-                }else{
+
+                    if(res.data.length === 0){
+                        setCatId('0');
+                    }else{
+                    setCatId(res.data[0].cat_id);
                     let templateParams={
                         tmpl_type : 'NORMAL',
                         folder_id : value,
@@ -71,8 +75,10 @@ const ManageTemplates = () => {
                     }
                     templateData(templateParams);
                 }
+            }
             })
-        }else if(input ==='cat_id'){
+        }
+        else if(input === 'cat_id' && value !== '0'){
             setCatId(value);
             let templateParams={
                 tmpl_type : 'NORMAL',

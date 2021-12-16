@@ -1,13 +1,10 @@
 import React,{useState} from 'react'
 import Picker from 'emoji-picker-react';
 import Span  from "@material-ui/core/Box";
-import { withStyles, Typography, Divider, Grid, FormControl, TextField, MenuItem, Button, IconButton, Menu, Collapse,FormHelperText } from '@material-ui/core';
-import { Timeline, TimelineItem, TimelineSeparator, TimelineDot, TimelineConnector, TimelineContent} from '@material-ui/lab';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEdit, faTrashAlt} from '@fortawesome/free-solid-svg-icons';
+import Circularloader from '../../../helper/loaders/CircularLoader';
+import { withStyles, Typography, Divider, Grid, FormControl, TextField, MenuItem, Button, IconButton, Menu,FormHelperText } from '@material-ui/core';
 import ImageIcon from '@material-ui/icons/Image';
 import AttachmentIcon from '@material-ui/icons/Attachment';
-import AddIcon from '@material-ui/icons/Add';
 import SentimentSatisfiedOutlinedIcon from '@material-ui/icons/SentimentSatisfiedOutlined';
 import NotInterestedIcon from '@material-ui/icons/NotInterested';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
@@ -67,8 +64,8 @@ const styles = (theme) =>({
 })
 
 const EditNormalTemplate = (props) =>{
-const {classes,inputs,errors,updateGroup,handleChange,btnLoader,folderId,catId,
-    folderList,categoryList} = props;
+const {classes,inputs,errors,handleChange,btnLoader,
+    folderList,categoryList,onUpdateBtn} = props;
 
 const [anchorEl, setAnchorEl] = React.useState(null);
 const open = Boolean(anchorEl);
@@ -84,8 +81,6 @@ const handleExpandClick = () => {
     setExpanded(!expanded);
   };
 
-  const [SelectedIndex, setSelectedIndex] = useState (1);
-
     return (
         <React.Fragment>
             <Span px={4}>
@@ -99,7 +94,7 @@ const handleExpandClick = () => {
                                     <TextField
                                         select
                                         name="folder_id"
-                                        value={inputs['folder_id']}
+                                        value={inputs['folder_id'] || ''}
                                         variant="outlined"
                                         onChange={event =>{
                                             handleChange(
@@ -109,7 +104,7 @@ const handleExpandClick = () => {
                                         }}
                                         InputProps={{ classes: { input: classes.textFieldFolder, }, }}
                                     >
-                                        <MenuItem value={0}>
+                                        <MenuItem value='0'>
                                         Select Folder
                                         </MenuItem>
 
@@ -126,7 +121,7 @@ const handleExpandClick = () => {
                                 <TextField
                                         select
                                         name="cat_id"
-                                        value={inputs['cat_id']}
+                                        value={inputs['cat_id'] || ''}
                                         variant="outlined"
                                         onChange={event =>{
                                             handleChange(
@@ -136,7 +131,7 @@ const handleExpandClick = () => {
                                         }}
                                         InputProps={{ classes: { input: classes.textFieldFolder, }, }}
                                     >
-                                        <MenuItem value={0}>
+                                        <MenuItem value='0'>
                                         Select Category
                                         </MenuItem>
                                         {categoryList &&  categoryList.map((option) => (
@@ -145,7 +140,6 @@ const handleExpandClick = () => {
                                             </MenuItem>
                                         ))
                                         }
-
                                     </TextField>
                                 </FormControl>
                             </Grid>
@@ -244,7 +238,9 @@ const handleExpandClick = () => {
                                 </div>
                             </div>
                         </Grid>
-                        <Button variant="outlined" className={classes.UpdateTempBtn}>Update Template</Button>                  
+                        <Button variant="outlined" className={classes.UpdateTempBtn} onClick={onUpdateBtn}>
+                            Update Template
+                            </Button>                  
                     </Grid>
                 </Grid>
             </Span>

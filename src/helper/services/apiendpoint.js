@@ -18,6 +18,7 @@ export const API_ENDPOINTS = {
     addCategory : API_GATEWAY_URL + 'addCategory',
     listAllCategory :  API_GATEWAY_URL + 'category/listAll',
     updateCategory : API_GATEWAY_URL + 'updateCategory',
+    updateTemplate : API_GATEWAY_URL + 'template/update',
     
     
 }
