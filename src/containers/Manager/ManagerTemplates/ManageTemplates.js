@@ -1,9 +1,10 @@
 import React,{useState,useEffect} from 'react';
 import ManageTemplate from '../../../components/Manager/ManagerTemplates/ManageTemplate';
 import Snackbar from '../../../components/Snackbar/Snackbar';
-import {listAllFolderAPI,listAllCategoryAPI,templateListAPI} from '../../../helper/services/API/Manager';
+import {listAllFolderAPI,listAllCategoryAPI,templateListAPI,deleteTemplateAPI} from '../../../helper/services/API/Manager';
+import ComfirmDialogComponent from '../../../components/common/ComfirmDialog';
 
-const ManageTemplates = () => {
+const ManageTemplates = (props) => {
     const [folderList,setFolderList]=useState(null);
     const [folderId,setFolderId]=useState(null);
     const [catId,setCatId]=useState(null);
@@ -17,6 +18,7 @@ const ManageTemplates = () => {
             variant:'success'
         }
     });
+    const [confirmDialog, setConfirmDialog] = useState({alert: false,id: null,index:null});
 
     useEffect(()=>{
         let params={
@@ -46,7 +48,9 @@ const ManageTemplates = () => {
     },[])
 
     const templateData = (params) =>{
+        setContentLoader(true);
         templateListAPI(params).then((res) => {
+        setContentLoader(false);
             if (res.success && res.message_code === 10010) {
                 setTemplateList(res.data);
             }
@@ -88,8 +92,36 @@ const ManageTemplates = () => {
             templateData(templateParams);
         }
     }
+
+    const handleDelete = (value,index) => {
+        setConfirmDialog({alert:true, id:value,index:index});
+    }
+    const deleteTemplate = (value) => {
+        if(value === true){
+        let params = {
+            tmpl_id:confirmDialog.id
+        }
+        deleteTemplateAPI(params).then((res) => {
+            console.log(res);
+            if(res.success && res.message_code === 10030){
+            setSnackbarState({
+                messageInfo:{
+                    open:true,
+                    message:res.message,
+                    variant:'success'
+                }
+            })
+            // delete data[confirmDialog.index];
+            // setTemplateList(templateList);
+            window.location.reload();
+        }
+        })
+    }
+    setConfirmDialog({alert: false,id: null,index:null});
+    }
     return ( 
         <React.Fragment>
+
             {snackbarState.messageInfo.open && <Snackbar
             message={snackbarState.messageInfo.message}
             open={snackbarState.messageInfo.open}
@@ -114,7 +146,20 @@ const ManageTemplates = () => {
                 contentLoader={contentLoader}
                 handleChange={handleChange}
                 templateList={templateList}
+                handleDelete={handleDelete}
             />
+            {(confirmDialog.alert) &&
+            <ComfirmDialogComponent
+                title='Delete Template Confirmation'
+                yesTitle='Yes Delete'
+                noTitle="No"
+                deleteName='Do you want to delete selected template?'
+                open={confirmDialog.alert}
+                deleteConfirm={(value)=>{
+                    deleteTemplate(value);
+                }}
+            />
+            }
         </React.Fragment>
      );
 }

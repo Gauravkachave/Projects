@@ -163,3 +163,16 @@ export const updateTemplateAPI = (params,signal) => {
     }
     return serviceRequest(url,requestOptions);
 }
+
+export const deleteTemplateAPI = (params,signal) => {
+    let url=API_ENDPOINTS.deleteTemplate;
+    
+    let requestOptions = {
+        method:'POST',
+        body:JSON.stringify(params),
+        headers:{
+            'session-token' : getSessionToken('session_token')
+        }
+    }
+    return serviceRequest(url,requestOptions);
+}

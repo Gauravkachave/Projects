@@ -1,8 +1,7 @@
 import React,{useState,useEffect} from 'react';
 import EditNormalTemplateComponent from '../../../components/Manager/ManagerTemplates/EditNormalTemplate';
 import Snackbar from '../../../components/Snackbar/Snackbar';
-import {templateDetailsAPI,listAllFolderAPI,listAllCategoryAPI,updateTemplateAPI} from '../../../helper/services/API/Manager';
-
+import {templateDetailsAPI,listAllFolderAPI,listAllCategoryAPI,updateTemplateAPI,deleteTemplateAPI} from '../../../helper/services/API/Manager';
 
 const EditNormalTemplate = (props) => {
     const tmpl_id = props.match.params.id;
@@ -22,16 +21,16 @@ const EditNormalTemplate = (props) => {
     });
     let folderId;
 
-const editTemplateDetails = async() => {
-    let params = {
-        tmpl_id :tmpl_id
-    }    
-    setBtnLoader(true);
+    const editTemplateDetails = async() => {
+        let params = {
+            tmpl_id :tmpl_id
+        } 
             await templateDetailsAPI(params).then((res)=>{
                 setBtnLoader(false);
                 if(res.success && res.message_code === 10010){
                         setInputs({
                             ...inputs,
+                            tmpl_id :res.data.tmpl_id,
                             tmpl_name:res.data.tmpl_name,
                             tmpl_message:res.data.tmpl_message,
                             cat_id:res.data.tmpl_cat_id,
@@ -45,38 +44,38 @@ const editTemplateDetails = async() => {
                 let initialFolderId = folderId;
                 let categoryListData = await getCategoryList(initialFolderId);
                 setCategoryList(categoryListData);                
-}
+    }
 
-const getFolderList = async() => {
-    try {
-        let folderList = await listAllFolderAPI({ folder_type:'NORMAL' });
-        if(folderList.success && folderList.data){ return folderList.data; }
-        else { return []; }
-    } catch (error) {
-        throw error;
-    };
-}
+    const getFolderList = async() => {
+        try {
+            let folderList = await listAllFolderAPI({ folder_type:'NORMAL' });
+            if(folderList.success && folderList.data){ return folderList.data; }
+            else { return []; }
+        } catch (error) {
+            throw error;
+        };
+    }
 
-const getCategoryList = async(folderId) => {
-    try {
-        let categoryList = await listAllCategoryAPI({ folder_id: folderId });
-        if(categoryList.success && categoryList.data){ return categoryList.data;}
-        else { return []; }
-    } catch (error) {
-        throw error;
-    };
-}
+    const getCategoryList = async(folderId) => {
+        try {
+            let categoryList = await listAllCategoryAPI({ folder_id: folderId });
+            if(categoryList.success && categoryList.data){ return categoryList.data;}
+            else { return []; }
+        } catch (error) {
+            throw error;
+        };
+    }
 
-useEffect(() => {
-    (async () => {
-        let folderListData = await getFolderList();
-        setFolderList(folderListData);
-         await editTemplateDetails();
-    })
-    ().catch(err => {
-        console.error('Caught error while getting folder and category list ',err);
-    });
-}, []);
+    useEffect(() => {
+        (async () => {
+            let folderListData = await getFolderList();
+            setFolderList(folderListData);
+            await editTemplateDetails();
+        })
+        ().catch(err => {
+            console.error('Caught error while getting folder and category list ',err);
+        });
+    }, []);
 
     const handleChange = (input,value) => {
         if(input === 'folder_id' && value !== '0'){
@@ -117,20 +116,55 @@ useEffect(() => {
     }
 
     const onUpdateBtn = () => {
-        // if(handleValidation()){
+        if(handleValidation()){
             let params={
-                tmpl_id:parseInt(tmpl_id),
                 ...inputs,
             }
             console.log(params);
             updateTemplateAPI(params).then((res) => {
                 console.log(res);
+                if(res.success && res.message_code === 10019){
+                setSnackbarState({
+                    messageInfo:{
+                        open:true,
+                        message:res.message,
+                        variant:'success'
+                    }
+                })
+                setTimeout(() => {
+                    props.history.push({ pathname: '/manager/manage-normal-template', });
+                }, 1000);
+                }else{
+                    setSnackbarState({
+                        messageInfo:{
+                            open:true,
+                            message:res.message,
+                            variant:'error'
+                        }
+                    })
+                }
             })
-        // }
+        }
     }
+
 
     return ( 
         <React.Fragment>
+            {snackbarState.messageInfo.open && <Snackbar
+            message={snackbarState.messageInfo.message}
+            open={snackbarState.messageInfo.open}
+            closeSnackBar={() => {
+                setSnackbarState({
+                    messageInfo: {
+                        open: false,
+                        message: null,
+                        variant: 'success'
+                    }
+                });
+            }}
+            variant={snackbarState.messageInfo.variant}
+            autoHideDuration={5000}
+            /> }
             <EditNormalTemplateComponent
             inputs={inputs}
             errors={errors}

@@ -18,7 +18,6 @@ const AddCategory = (props) => {
         }
     })
     
-
      useEffect (()=> {
         let params={
             folder_type:'NORMAL'
@@ -36,8 +35,6 @@ const AddCategory = (props) => {
         })
     },[])
     
-    
-
     const handleChange = (input,value) => {
         let isError = '';
 
@@ -77,7 +74,6 @@ const AddCategory = (props) => {
         return isValid;
     }
 
-    
     const AddCategoryBtn = () => {
         if(handleValidation()){
         setBtnLoader(true);
@@ -104,10 +100,8 @@ const AddCategory = (props) => {
                             variant:"error"
                         }
                     })
-
                 }
             })
-            
         }
     }
 
@@ -141,6 +135,7 @@ const AddCategory = (props) => {
             snackbarState={snackbarState}
             btnLoader={btnLoader}
             />
+
         </React.Fragment>
      );
 }

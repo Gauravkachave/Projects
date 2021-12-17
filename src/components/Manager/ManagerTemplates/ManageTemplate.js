@@ -34,8 +34,8 @@ const styles = (theme) => ({
 })
 
 const ManagePrivateTemplate= (props)=> {
-    const { classes, inputs, folderList, categoryList, contentLoader,handleChange,templateList
-        ,folderId,catId
+    const { classes, folderList, categoryList, contentLoader,handleChange,templateList
+        ,folderId,catId,handleDelete
     } = props;
 
     const [expanded, setExpanded] = React.useState(false);
@@ -127,11 +127,22 @@ const ManagePrivateTemplate= (props)=> {
                                     <TableCell classes={{ root: classes.TableCellCss }}>{option.tmpl_name}</TableCell>
                                     <TableCell classes={{ root: classes.TableCellCss }}>{option.tmpl_message}</TableCell>
                                     <TableCell classes={{ root: classes.TableCellCss }}>
-
-                                        <Button variant="contained" size="small" className={classes.ActionButns} component={Link} to ={`/manager/edit-normal-template/${option.tmpl_id}`} >
+                                        <Button
+                                            variant="contained" 
+                                            size="small" 
+                                            className={classes.ActionButns} 
+                                            component={Link} 
+                                            to ={`/manager/edit-normal-template/${option.tmpl_id}`} 
+                                        >
                                             <FontAwesomeIcon icon={faEdit} />
                                         </Button>
-                                        <Button variant="contained" size="small" className={classes.ActionButns}>
+
+                                        <Button 
+                                            variant="contained" 
+                                            size="small" 
+                                            className={classes.ActionButns} 
+                                            onClick={() => handleDelete(option.tmpl_id)}
+                                        >
                                             <FontAwesomeIcon icon={faTrashAlt} />
                                         </Button>
                                     </TableCell>
