@@ -54,8 +54,8 @@ const styles = (theme) =>({
 
 
 const AddTemplate = (props) => {
-const {classes,inputs,errors,onHandleChange,onCreateTemplateBtn,
-        onCategoryChange,selectFolder,contentLoader,subCategory} = props;
+const {classes, inputs, errors, onHandleChange, onCreateTemplateBtn, mesError,
+        onCategoryChange, selectFolder, contentLoader, subCategory, textAreaCharLeft,textAreaCharLimit} = props;
 
 const [anchorEl, setAnchorEl] = React.useState(null);
 const open = Boolean(anchorEl);
@@ -346,11 +346,9 @@ const [mediaDialog, setMediaDialog] = React.useState(false);
                                         </div>    
                                         {/* ................ */}
                                     </div>
-                                    <Typography variant="caption" className={classes.RemaingLetters}> 600 | 600</Typography>
+                                    <Typography variant="caption" className={classes.RemaingLetters}>{textAreaCharLeft} / {textAreaCharLimit} </Typography>
                                 </div>
-                                <FormHelperText error>
-                                     {errors['tmpl_message']}
-                                     </FormHelperText>
+                                {mesError && <FormHelperText error> {mesError}</FormHelperText> }
                             </div>
                             {/* ................... */}
                         </Grid>

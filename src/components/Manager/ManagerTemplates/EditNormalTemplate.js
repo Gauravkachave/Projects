@@ -64,8 +64,8 @@ const styles = (theme) =>({
 })
 
 const EditNormalTemplate = (props) =>{
-const {classes,inputs,errors,handleChange,btnLoader,
-    folderList,categoryList,onUpdateBtn} = props;
+const {classes,inputs,errors,handleChange,btnLoader, mesError,
+    folderList,categoryList,onUpdateBtn,charactersCount,textAreaCharLimit} = props;
 
 const [anchorEl, setAnchorEl] = React.useState(null);
 const open = Boolean(anchorEl);
@@ -187,16 +187,18 @@ const handleExpandClick = () => {
                                         onChange={(event) => {
                                             handleChange(
                                                 event.target.name,
-                                                event.target.value
+                                                event.target.value,
+                                                event.target.selectionStart
                                             );
                                         }}
                                         
                                     />
-                                    <FormHelperText error>{errors['tmpl_message']}</FormHelperText>
                                     <Typography variant="caption" className={classes.NameInputHelperText}>
                                         Max image file size 5 MB (images only) and 500Kb for other media files. Be sure to do a test send
                                         with all new images.
                                     </Typography>
+                                    {mesError && <FormHelperText error> {mesError} </FormHelperText>}
+                                    {errors['tmpl_message'] && <FormHelperText error> {errors['tmpl_message']}</FormHelperText> }
                                 </FormControl> 
                                 <div  className="messageInput">
                                     <div>
@@ -234,8 +236,9 @@ const handleExpandClick = () => {
                                             </Menu>
                                         </div> 
                                     </div>
-                                    <Typography variant="caption" className={classes.RemaingLetters}> 600 | 600</Typography>
+                                    <Typography variant="caption" className={classes.RemaingLetters}>{charactersCount} / {textAreaCharLimit} </Typography>
                                 </div>
+                                {errors['tmpl_message'] && <FormHelperText error> {errors['tmpl_message']}</FormHelperText> }
                             </div>
                         </Grid>
                         <Button variant="outlined" className={classes.UpdateTempBtn} onClick={onUpdateBtn}>

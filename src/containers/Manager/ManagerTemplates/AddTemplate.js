@@ -8,28 +8,16 @@ import Snackbar from '../../../components/Snackbar/Snackbar';
         const[inputs,setInputs]=useState({
             folder_id:0, cat_id:0 , tmpl_type: 'NORMAL'
         });
-        const[errors,setErrors]=useState({});
-        const[contentLoader,setContentLoader]=useState(false);
-        const[selectFolder,setSelectFolder]=useState(null);
-        const[subCategory,setSubCategory]=useState(null);
+        const [errors,setErrors]=useState({});
+        const [contentLoader,setContentLoader]=useState(false);
+        const [selectFolder,setSelectFolder]=useState(null);
+        const [subCategory,setSubCategory]=useState(null);
+        const [textAreaCharLeft,setTextAreaCharLeft]=useState(600);
+        const [textAreaCharLimit] = useState(600);
+        const [mesError,setMesError]=useState(null);
         const [snackbarState, setSnackbarState] = useState({
             messageInfo: { open: false, message: null, variant: 'success' }
         });
-
-        // useEffect(()=>{
-        //     let params={
-        //         folder_type:'NORMAL'
-        //     }
-        //     listAllFolderAPI(params).then((res)=>{
-        //         if(res.success && res.message_code === 10005){
-        //             setSelectFolder(res.data);
-        //             // inputs['folder_id'] = "0";
-        //             // setInputs({...inputs});
-        //         }else{
-        //             console.log(res);
-        //         }
-        //     })
-        // },[])
 
         useEffect(() => {
             (async () => {
@@ -70,17 +58,7 @@ import Snackbar from '../../../components/Snackbar/Snackbar';
         }
 
         const onHandleChange = (input,value) => {
-            // let params = {
-            //     folder_id : value
-            // }
-            // setContentLoader(true);
-            // listAllCategoryAPI(params).then((res)=>{
-            // setContentLoader(false);
-            //     if(res.success && res.message_code === 10017){
-            //         setSubCategory(res.data);
-            //     }
-            // })
-
+            let isError = '';
             if(input === 'folder_id'){
                 let folderId = value;
                 (async () => {
@@ -89,11 +67,18 @@ import Snackbar from '../../../components/Snackbar/Snackbar';
                 })().catch(err => { console.error('Caught error while getting category list ',err); });
                 inputs[input] = value;
             }
+            if(input === 'tmpl_message') {
+                const byteSize = str => new Blob([str]).size;
+                let inputValLength = byteSize(value);
+                setTextAreaCharLeft((inputValLength <= textAreaCharLimit) ? textAreaCharLimit-inputValLength : textAreaCharLeft);
+                isError = (inputValLength > textAreaCharLimit) ? setMesError('You have exceeded character limit') : '';
+                value = (inputValLength <= textAreaCharLimit) ? value : inputs[input];
+                inputs[input] = value;
+            }
             else {
                 inputs[input] = value;
             }
             
-            let isError = '';
 
         inputs[input]=value;
         errors[input]= isError ? isError : '';
@@ -170,6 +155,9 @@ import Snackbar from '../../../components/Snackbar/Snackbar';
             onCreateTemplateBtn={onCreateTemplateBtn}
             selectFolder={selectFolder}
             subCategory={subCategory}
+            textAreaCharLeft={textAreaCharLeft}
+            textAreaCharLimit={textAreaCharLimit}
+            mesError={mesError}
             />
             </React.Fragment>
             

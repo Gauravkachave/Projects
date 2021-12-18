@@ -12,6 +12,9 @@ const EditNormalTemplate = (props) => {
     const [btnLoader,setBtnLoader]=useState(false);
     const [folderList,setFolderList]=useState(null);
     const [categoryList,setCategoryList]=useState(null);
+    const [charactersCount,setCharactersCount]=useState(600);
+    const [textAreaCharLimit]=useState(600);
+    const [mesError,setMesError]=useState(null);
     const[snackbarState,setSnackbarState]=useState({
         messageInfo:{
             open:false,
@@ -37,6 +40,7 @@ const EditNormalTemplate = (props) => {
                             folder_id:res.data.tmpl_folder_id,
                             });
                             folderId=res.data.tmpl_folder_id;
+                            setCharactersCount(charactersCount - res.data.tmpl_message.length);
                     }else{
                         console.log(res);
                     }
@@ -78,6 +82,7 @@ const EditNormalTemplate = (props) => {
     }, []);
 
     const handleChange = (input,value) => {
+        let isError = '';
         if(input === 'folder_id' && value !== '0'){
             let folderId = value;
             (async () => {
@@ -87,11 +92,18 @@ const EditNormalTemplate = (props) => {
             inputs[input] = value;
             inputs['cat_id'] = '0';
         }
-        else if(input === 'cat_id' && value !== '0'){
+        if(input === 'cat_id' && value !== '0'){
             setInputs(value);
             inputs[input] = value;
+
+        }if(input === 'tmpl_message'){
+            const byteSize = str => new Blob([str]).size;
+            let inputsLength = byteSize(value);
+            setCharactersCount((inputsLength <= textAreaCharLimit) ? textAreaCharLimit-inputsLength : charactersCount);
+            isError = (inputsLength > textAreaCharLimit) ? setMesError('You have exceeded character limit') : '';
+            value = (inputsLength <= textAreaCharLimit) ? value : inputs[input];
+            inputs[input] = value;
         }
-        let isError = '';
 
         inputs[input]=value;
         errors[input]= isError ? isError : '';
@@ -120,7 +132,6 @@ const EditNormalTemplate = (props) => {
             let params={
                 ...inputs,
             }
-            console.log(params);
             updateTemplateAPI(params).then((res) => {
                 console.log(res);
                 if(res.success && res.message_code === 10019){
@@ -173,6 +184,9 @@ const EditNormalTemplate = (props) => {
             folderList={folderList}
             categoryList={categoryList}
             onUpdateBtn={onUpdateBtn}
+            charactersCount={charactersCount}
+            textAreaCharLimit={textAreaCharLimit}
+            mesError={mesError}
             />
         </React.Fragment>
      );
