@@ -56,7 +56,7 @@ const styles = (theme) =>({
 const AddTemplate = (props) => {
 const {classes, inputs, errors, onHandleChange, onCreateTemplateBtn, mesError,
         onCategoryChange, selectFolder, contentLoader, subCategory, textAreaCharLeft,textAreaCharLimit} = props;
-
+    console.log(inputs);
 const [anchorEl, setAnchorEl] = React.useState(null);
 const open = Boolean(anchorEl);
 const handleMenu = (event) => {setAnchorEl(event.currentTarget);};
@@ -132,7 +132,7 @@ const [mediaDialog, setMediaDialog] = React.useState(false);
                                     <MenuItem value={0}>
                                         Select Category
                                     </MenuItem>
-                                {(subCategory && subCategory.length > 0) ? 
+                                {/* {(subCategory && subCategory.length > 0) ? 
                                     subCategory.map((option, index) => (
                                         <MenuItem key={option.cat_id} value={option.cat_id}>
                                             {option.cat_name}
@@ -140,10 +140,16 @@ const [mediaDialog, setMediaDialog] = React.useState(false);
                                     ))
                                     :
                                     <Span>No subcategories found .</Span>
-                                }
+                                } */}
+                                
+                                    {subCategory && subCategory.map(option => 
+                                    <MenuItem key={option.cat_id} value={option.cat_id}>
+                                    {option.cat_name}
+                                    </MenuItem>
+                                    )}
 
                                     </TextField>
-                                    {/* <FormHelperText error>{errors['cat_id']}</FormHelperText> */}
+                                    <FormHelperText error>{errors['cat_id']}</FormHelperText>
                                 </FormControl>
                             </Grid>
                         </Grid>
@@ -197,6 +203,9 @@ const [mediaDialog, setMediaDialog] = React.useState(false);
                                             )
                                         }}
                                     />
+                                    <FormHelperText error>
+                                     {errors['tmpl_message']}
+                                     </FormHelperText>
                                     <Typography variant="caption" className={classes.NameInputHelperText}>
                                         Max image file size 5 MB (images only) and 500Kb for other media files. Be sure to do a test send
                                         with all new images.

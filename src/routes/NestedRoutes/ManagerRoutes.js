@@ -33,6 +33,19 @@ const EditNormalTemplate = Loader (()=>
 import ('../../containers/Manager/ManagerTemplates/EditNormalTemplate'),
 );
 
+const ManageDripTemplate = Loader (() => 
+import ('../../containers/Manager/ManagerTemplates/ManageDripTemplates'),
+);
+
+const ManageDripFolders = Loader (() =>
+import ('../../containers/Manager/ManagerTemplates/ManageDripFolders'),
+);
+
+const AddDripFolder = Loader (() =>
+import ('../../containers/Manager/ManagerTemplates/AddDripFolder'),
+);
+
+
 const ManagerRoutes = (props) => {
 const { match } =props;
     return ( 
@@ -104,6 +117,36 @@ const { match } =props;
                     layout={dashboardLayout}
                     type='private'
                     title='Manager | ManageCategory | EditTemplate'
+                />
+
+                <AppRoute
+                    exact={true}
+                    path={`${match.path}/manage-drip-templates`}
+                    component={ManageDripTemplate}
+                    requireAuth={auth}
+                    layout={dashboardLayout}
+                    type='private'
+                    title='Manager | ManageDripTemplates | ManageDripTemplates'
+                />
+
+                <AppRoute
+                    exact={true}
+                    path={`${match.path}/manage-drip-folders`}
+                    component={ManageDripFolders}
+                    requireAuth={auth}
+                    layout={dashboardLayout}
+                    type='private'
+                    title='Manager | ManageDripFolders | ManageDripFolders'
+                />
+
+                <AppRoute
+                    exact={true}
+                    path={`${match.path}/add-drip-folder`}
+                    component={AddDripFolder}
+                    requireAuth={auth}
+                    layout={dashboardLayout}
+                    type='private'
+                    title='Manager | ManageDripFolders | AddDripFolder'
                 />
 
             </Switch>

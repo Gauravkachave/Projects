@@ -15,6 +15,7 @@ const EditNormalTemplate = (props) => {
     const [charactersCount,setCharactersCount]=useState(600);
     const [textAreaCharLimit]=useState(600);
     const [mesError,setMesError]=useState(null);
+    const [stopMes,setStopMes] = useState('Reply STOP to cancel.');
     const[snackbarState,setSnackbarState]=useState({
         messageInfo:{
             open:false,
@@ -81,6 +82,23 @@ const EditNormalTemplate = (props) => {
         });
     }, []);
 
+    const handleUnsubscribeInfoIcon = () => {
+        let existingMes = inputs['tmpl_message'] ? inputs['tmpl_message'] : '';
+        if(stopMes){
+            let newMes = existingMes + '\n\n' + stopMes;
+            handleChange('tmpl_message',newMes);
+            setStopMes(null);
+        }else{
+            setSnackbarState({
+                messageInfo:{
+                    open:true,
+                    message:"You have already Unsubscribe",
+                    variant:'warning'
+                }
+            })
+        }
+    }
+
     const handleChange = (input,value) => {
         let isError = '';
         if(input === 'folder_id' && value !== '0'){
@@ -99,6 +117,7 @@ const EditNormalTemplate = (props) => {
         }if(input === 'tmpl_message'){
             const byteSize = str => new Blob([str]).size;
             let inputsLength = byteSize(value);
+            // (let inputsLength =value.length;)
             setCharactersCount((inputsLength <= textAreaCharLimit) ? textAreaCharLimit-inputsLength : charactersCount);
             isError = (inputsLength > textAreaCharLimit) ? setMesError('You have exceeded character limit') : '';
             value = (inputsLength <= textAreaCharLimit) ? value : inputs[input];
@@ -187,6 +206,7 @@ const EditNormalTemplate = (props) => {
             charactersCount={charactersCount}
             textAreaCharLimit={textAreaCharLimit}
             mesError={mesError}
+            handleUnsubscribeInfoIcon={handleUnsubscribeInfoIcon}
             />
         </React.Fragment>
      );

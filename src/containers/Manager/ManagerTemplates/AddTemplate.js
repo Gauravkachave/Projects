@@ -6,7 +6,7 @@ import Snackbar from '../../../components/Snackbar/Snackbar';
 
     const AddTemplate = (props) => {
         const[inputs,setInputs]=useState({
-            folder_id:0, cat_id:0 , tmpl_type: 'NORMAL'
+            folder_id:'0', cat_id:'0' , tmpl_type: 'NORMAL'
         });
         const [errors,setErrors]=useState({});
         const [contentLoader,setContentLoader]=useState(false);
@@ -23,14 +23,14 @@ import Snackbar from '../../../components/Snackbar/Snackbar';
             (async () => {
                 let folderListData = await getFolderList();
                 setSelectFolder(folderListData);
-                inputs['folder_id'] = "0";
-                 setInputs({...inputs});
+                // inputs['folder_id'] = "0";
+                //  setInputs({...inputs});
                  
                 let initialFolderId = folderListData[0].folder_id;
                 let categoryListData = await getCategoryList(initialFolderId);
                 setSubCategory(categoryListData);
-                inputs['cat_id'] = "0";
-                 setInputs({...inputs});
+                // inputs['cat_id'] = "0";
+                //  setInputs({...inputs});
             })
             ().catch(err => {
                 console.error('Caught error while getting folder and category list ',err);
@@ -87,21 +87,22 @@ import Snackbar from '../../../components/Snackbar/Snackbar';
         setErrors({...setErrors});
         }
 
-        
         const handleValidation = () => {
             let isValid=true;
             let error=errors;
-            let errordata=['folder_id','tmpl_name','tmpl_message','tmpl_type'];
+            let errordata=['folder_id','cat_id','tmpl_name','tmpl_message','tmpl_type'];
 
             errordata.forEach(value => {
-                if (!inputs[value] || (value !== 'folder_id' && !inputs[value].trim())) {
+                if(value === 'folder_id' || value === 'cat_id'){
+                    if(inputs[value] === '0'){
                     isValid = false;
                     error[value] = "This field is required";
-                }
-                if(value === 'folder_id' && inputs[value] === '0'){
-                    isValid = false;
-                    error[value] = "This field is required";
-                }
+                }}
+                else{
+                if(!inputs[value] || !inputs[value].trim()){
+                    isValid=false;
+                    error[value]='This field is required';
+                }}
             })
             setErrors({...error});
             return isValid;

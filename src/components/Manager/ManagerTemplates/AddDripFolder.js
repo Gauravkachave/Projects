@@ -14,17 +14,19 @@ const styles = (theme) =>({
     LableShrink:{fontSize:15, transform:'translate(17px, -4px) scale(0.75) !important', color:'#232323'},
     SelectedRadioBtn:{color:'#fb6e8a !important', padding:0, margin:'0px 3px 0px 0px'},
     AddFolderBtn:{borderRadius:50, borderColor:'#fb6e8a', padding:'10px 39px', fontSize:11, color:'#fb6e8a', marginTop:24},
+
     [theme.breakpoints.only('lg')]: {
         InputWidth:{width:350}
     },
 })
-const CreateFolder= (props)=>{
-    const {classes,errors,inputs,handleChange,addFolderBtn,btnLoader} = props;
+
+const  AddDripFolder = (props) =>  {
+    const {classes, handleChange, addFolderBtn, inputs, errors,btnLoader } = props;
     return (
         <React.Fragment>
             <Span px={4}>
                 <Typography variant="subtitle2" className={classes.AddFolderTitle}>
-                    Add Folder
+                    Add Drip Folder
                 </Typography>
                 <Span mb={3.7}><Divider/></Span>
                 <Grid container direction="row">
@@ -32,43 +34,31 @@ const CreateFolder= (props)=>{
                         <FormControl fullWidth className={classes.InputWidth}>
                             <TextField
                                 id="folder_name"
+                                name="folder_name"
                                 label="Folder Name"
                                 type="text"
+                                value={inputs['folder_name'] || ''}
                                 variant="outlined"
-                                name='folder_name'
-                                value={inputs['folder_name' || '' ]}
                                 InputProps={{ classes: {input: classes.textField, focused:classes.textFieldFocus},}}
                                 InputLabelProps={{classes:{outlined:classes.cssLabel,shrink:classes.LableShrink}}}
-                                onChange={event =>{
-                                    handleChange(
-                                        event.target.name,
-                                        event.target.value
-                                    )
-                                }}
+                                onChange= {(e) => handleChange(e.target.name,e.target.value)}
                             />
-                            <FormHelperText error>{errors['folder_name']}</FormHelperText>
+                            { <FormHelperText error>{errors['folder_name']}</FormHelperText>}
                         </FormControl>
-                        <Span mt={3.2}/>
+                        <Span mt={3.6}/>
                         <FormControl fullWidth className={classes.InputWidth}>
                             <TextField
                                 id="folder_password"
+                                name="folder_password"
                                 label="Password"
                                 type="password"
+                                value={inputs["folder_password"] || ''}
                                 variant="outlined"
                                 InputProps={{ classes: {input: classes.textField,},}}
                                 InputLabelProps={{classes:{outlined:classes.cssLabel,shrink:classes.LableShrink}}}
-                                name="folder_password"
-                                value={inputs['folder_password'] || ''}
-                                onChange={(event) => {
-                                    handleChange(
-                                        event.target.name,
-                                        event.target.value
-                                    );
-                                }}
+                                onChange={(e)=> handleChange(e.target.name,e.target.value)}
                             />
-                            <FormHelperText error>
-                                {errors['folder_password']}
-                            </FormHelperText>
+                             {<FormHelperText error>{errors['folder_password'] || ''}</FormHelperText>}
                         </FormControl>
                         <Span mt={3.2}/>
                         <div>
@@ -83,8 +73,8 @@ const CreateFolder= (props)=>{
                                         event.target.value
                                     );
                                 }}
-                            />
-                            <Typography variant="caption" >Active</Typography>
+                                />
+                            <Typography variant="caption">Active</Typography>
                             &nbsp;&nbsp;
                             <Radio 
                                 classes={{root:classes.SelectedRadioBtn,checked:classes.SelectedRadioBtn}}
@@ -97,14 +87,15 @@ const CreateFolder= (props)=>{
                                         event.target.value
                                     );
                                 }}
-                            />
+                                />
                             <Typography variant="caption">Inactive</Typography>
                         </div>
                         {<FormHelperText error>{errors['folder_state'] || ''}</FormHelperText>}
-                        <Button variant="outlined" 
-                            className={classes.AddFolderBtn}
-                            onClick={addFolderBtn}
-                            >
+                        <Button 
+                            variant="outlined" 
+                            className={classes.AddFolderBtn} 
+                            onClick = {addFolderBtn}
+                        >
                         {btnLoader && <Circularloader/>}
                             Add Folder
                         </Button>
@@ -115,4 +106,4 @@ const CreateFolder= (props)=>{
     )
 }
 
-export default withStyles(styles)(CreateFolder);
+export default withStyles(styles)(AddDripFolder);

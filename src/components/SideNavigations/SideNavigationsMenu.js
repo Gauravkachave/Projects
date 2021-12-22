@@ -48,8 +48,10 @@ const styles = () => ({
 
 
 const SideNavigationsMenu = (props) => {
-  const groupsItems = ['create-public-group', 'create-sync-group', 'manage-public-groups', 'manage-sync-groups'];    
-  const managerItems =['manage-normal-template', 'add-private-template', 'manage-normal-category', 'manage-normal-folder','add-normal-category','edit-normal-template'];
+  const groupsItems = ['create-public-group', 'create-sync-group', 'manage-public-groups', 'manage-sync-groups'];
+
+  const managerItems =['manage-normal-template', 'add-private-template', 'manage-normal-category', 'manage-normal-folder','add-normal-category','edit-normal-template' ,
+                        'manage-drip-templates' ,'manage-drip-folders', 'add-drip-folder'];
 
   const [subNavSelected,setSubNavSelected] = useState(null);
     const [clickedItem, setClickedItem] = useState(null);
@@ -89,11 +91,6 @@ const SideNavigationsMenu = (props) => {
             primary="Campaigns"
           />
         </ListItem>
-
-
-
-
-
                 <ListItem 
                     button disableGutters 
                     className={

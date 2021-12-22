@@ -1,7 +1,6 @@
 import React,{useState} from 'react'
 import Picker from 'emoji-picker-react';
 import Span  from "@material-ui/core/Box";
-import Circularloader from '../../../helper/loaders/CircularLoader';
 import { withStyles, Typography, Divider, Grid, FormControl, TextField, MenuItem, Button, IconButton, Menu,FormHelperText } from '@material-ui/core';
 import ImageIcon from '@material-ui/icons/Image';
 import AttachmentIcon from '@material-ui/icons/Attachment';
@@ -65,15 +64,22 @@ const styles = (theme) =>({
 
 const EditNormalTemplate = (props) =>{
 const {classes,inputs,errors,handleChange,btnLoader, mesError,
-    folderList,categoryList,onUpdateBtn,charactersCount,textAreaCharLimit} = props;
+    folderList,categoryList,onUpdateBtn,charactersCount,textAreaCharLimit, handleUnsubscribeInfoIcon} = props;
 
 const [anchorEl, setAnchorEl] = React.useState(null);
 const open = Boolean(anchorEl);
 const handleMenu = (event) => {setAnchorEl(event.currentTarget);};
 const handleClose = () => {setAnchorEl(null);};
 
-const [chosenEmoji, setChosenEmoji] = useState(null);
-const onEmojiClick = (event, emojiObject) => {setChosenEmoji(emojiObject);};
+const [chosenEmoji, setChosenEmoji] = useState('');
+const onEmojiClick = (event, emojiObject) => {
+    setChosenEmoji(preVal => preVal + emojiObject.emoji);
+
+    let selectedEmoji = emojiObject.emoji;
+    let textVal = inputs['tmpl_message'] ? inputs['tmpl_message'] : '';
+    let concatStr = textVal + selectedEmoji;
+    handleChange('tmpl_message' ,concatStr);
+};
 
 const [expanded, setExpanded] = React.useState(false);
 
@@ -206,7 +212,7 @@ const handleExpandClick = () => {
                                         <IconButton className={classes.MessageAllIonsAttatchment}>
                                             <AttachmentIcon className={classes.InputIcons}/>
                                         </IconButton>
-                                        <IconButton className={classes.MessageAllIons}><NotInterestedIcon className={classes.InputIcons}/></IconButton>
+                                        <IconButton className={classes.MessageAllIons} ><NotInterestedIcon className={classes.InputIcons} onClick = {handleUnsubscribeInfoIcon}/></IconButton>
                                         <IconButton className={classes.MessageAllIons}><PersonAddIcon className={classes.InputIcons}/></IconButton>
                                         <IconButton className={classes.MessageAllIons}  onClick={handleMenu}><SentimentSatisfiedOutlinedIcon className={classes.InputIcons}/></IconButton>
                                         <div>
