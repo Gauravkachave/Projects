@@ -24,17 +24,18 @@ const ManageTemplates = (props) => {
         let params={
             folder_type:'NORMAL'
         }
+        setContentLoader(true);
         listAllFolderAPI(params).then((res)=>{
             if(res.success && res.message_code === 10005){
                 setFolderList(res.data);
-                setFolderId(res.data[0].id);
+                setFolderId(res.data[2].id);
 
-        let catParams={folder_id:res.data[0].id};
+        let catParams = {folder_id:res.data[2].id};
         listAllCategoryAPI(catParams).then((res)=>{
-            if(res.success){
+            if(res.success && res.message_code === 10017){
                 setCategoryList(res.data);
                 setCatId(res.data[0].cat_id);
-            }
+            
                    
         let templateParams={
             tmpl_type : 'NORMAL',
@@ -42,6 +43,7 @@ const ManageTemplates = (props) => {
             cat_id : res.data[0].cat_id
         }
         templateData(templateParams);
+    }
         })
         }
         })
@@ -53,6 +55,7 @@ const ManageTemplates = (props) => {
         setContentLoader(false);
             if (res.success && res.message_code === 10010) {
                 setTemplateList(res.data);
+                console.log(res);
             }
         })
     }

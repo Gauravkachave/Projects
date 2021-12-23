@@ -60,10 +60,12 @@ const styles = (theme) =>({
 		boxShadow:'none', padding:'6px 6px',fontSize:15, color:'#8f8989', background:'#feeef1', minWidth:30, borderRadius:'50%',
 		'&:hover':{boxShadow:'none', background:'#fff', color:'#fb6e8a'}
 	},
+    inputCss : {display:"none"},
+    imgCss : {width : 50 , height : 50, border :"1px solid #fb6e8a"}
 })
 
 const EditNormalTemplate = (props) =>{
-const {classes,inputs,errors,handleChange,btnLoader, mesError,
+const {classes,inputs,errors,handleChange,btnLoader, mesError, selectedFile, handleImageChange,
     folderList,categoryList,onUpdateBtn,charactersCount,textAreaCharLimit, handleUnsubscribeInfoIcon} = props;
 
 const [anchorEl, setAnchorEl] = React.useState(null);
@@ -81,12 +83,42 @@ const onEmojiClick = (event, emojiObject) => {
     handleChange('tmpl_message' ,concatStr);
 };
 
-const [expanded, setExpanded] = React.useState(false);
-
-const handleExpandClick = () => {
-    setExpanded(!expanded);
+  const [anchorElPerson, setAnchorElPerson] = React.useState(null);
+  const [selectedPerson, setSelectedPerson] = useState(null);
+  
+  
+  const handleClick = (e,val) => {
+    setAnchorElPerson(e.currentTarget);
+    
   };
 
+  const handleClosePerson = () => {
+    setAnchorElPerson(null);
+  };
+
+  const handlePersonClick = (val) => {
+    setSelectedPerson(preVal => preVal  + val);
+    let textVal = inputs['tmpl_message'] ? inputs['tmpl_message'] : '';
+    if(textVal.includes(val)){
+        setAnchorElPerson(null);
+        alert("Already submitted same name");
+    }else{
+    let selectedName = val;
+    let concatStr = textVal + " " + selectedName;
+    handleChange('tmpl_message' ,concatStr);
+    setAnchorElPerson(null);
+    }
+  }
+
+const personList = [
+    {value:'select' , name:'Select WildCard'},
+    {value:'first_name' , name:'First Name'},
+    {value:'field1' , name:'Custom Field 1'},
+    {value:'field2' , name:'Custom Field 2'},
+    {value:'field3' , name:'Custom Field 3'},
+    {value:'field4' , name:'Custom Field 4'}
+];
+  
     return (
         <React.Fragment>
             <Span px={4}>
@@ -209,11 +241,44 @@ const handleExpandClick = () => {
                                 <div  className="messageInput">
                                     <div>
                                         <IconButton className={classes.MessageAllIons}><ImageIcon className={classes.InputIcons}/></IconButton>
-                                        <IconButton className={classes.MessageAllIonsAttatchment}>
+                                        <input
+                                        accept="image/*"
+                                        name="tmpl_media_url"
+                                        type="file"
+                                        id="tmpl_media_url"
+                                        onChange = {(e) => handleImageChange(e.target.files[0])}
+                                        className={classes.inputCss}
+                                        />
+
+                                        <label htmlFor = "tmpl_media_url">
+                                        <IconButton 
+                                            className={classes.MessageAllIonsAttatchment} 
+                                            component="span"
+                                        >
                                             <AttachmentIcon className={classes.InputIcons}/>
                                         </IconButton>
+                                        </label>
+
                                         <IconButton className={classes.MessageAllIons} ><NotInterestedIcon className={classes.InputIcons} onClick = {handleUnsubscribeInfoIcon}/></IconButton>
-                                        <IconButton className={classes.MessageAllIons}><PersonAddIcon className={classes.InputIcons}/></IconButton>
+                                        
+                                        <IconButton className={classes.MessageAllIons}>
+                                            <PersonAddIcon className={classes.InputIcons} onClick={handleClick}/>
+                                        </IconButton>
+                                        <Menu
+                                            id="simple-menu"
+                                            anchorEl={anchorElPerson}
+                                            keepMounted
+                                            open={Boolean(anchorElPerson)}
+                                            onClose={handleClosePerson}
+                                            
+                                            >
+                                            {personList &&  personList.map((option,index) => (
+                                            <MenuItem key={index} value={option.value} onClick={() => handlePersonClick(option.value)}>
+                                                         {option.name}
+                                            </MenuItem>
+                                        ))
+                                        }
+                                        </Menu>
                                         <IconButton className={classes.MessageAllIons}  onClick={handleMenu}><SentimentSatisfiedOutlinedIcon className={classes.InputIcons}/></IconButton>
                                         <div>
                                             <Menu
@@ -244,6 +309,8 @@ const handleExpandClick = () => {
                                     </div>
                                     <Typography variant="caption" className={classes.RemaingLetters}>{charactersCount} / {textAreaCharLimit} </Typography>
                                 </div>
+
+                                {selectedFile.file ? <img src={selectedFile.file} className = {classes.imgCss}/> : '' }
                                 {errors['tmpl_message'] && <FormHelperText error> {errors['tmpl_message']}</FormHelperText> }
                             </div>
                         </Grid>

@@ -8,6 +8,9 @@ const EditNormalTemplate = (props) => {
     const [inputs,setInputs]=useState({
         folder_id:0,cat_id:0,tmpl_type:'NORMAL'
     });
+    const [selectedFile,setSelectedFile] = useState({
+        file:''
+    });
     const [errors,setErrors]=useState({});
     const [btnLoader,setBtnLoader]=useState(false);
     const [folderList,setFolderList]=useState(null);
@@ -152,7 +155,6 @@ const EditNormalTemplate = (props) => {
                 ...inputs,
             }
             updateTemplateAPI(params).then((res) => {
-                console.log(res);
                 if(res.success && res.message_code === 10019){
                 setSnackbarState({
                     messageInfo:{
@@ -176,8 +178,10 @@ const EditNormalTemplate = (props) => {
             })
         }
     }
-
-
+    const handleImageChange = (file) => {
+        setSelectedFile({file:URL.createObjectURL(file)});
+    }
+    
     return ( 
         <React.Fragment>
             {snackbarState.messageInfo.open && <Snackbar
@@ -207,6 +211,8 @@ const EditNormalTemplate = (props) => {
             textAreaCharLimit={textAreaCharLimit}
             mesError={mesError}
             handleUnsubscribeInfoIcon={handleUnsubscribeInfoIcon}
+            selectedFile={selectedFile}
+            handleImageChange={handleImageChange}
             />
         </React.Fragment>
      );

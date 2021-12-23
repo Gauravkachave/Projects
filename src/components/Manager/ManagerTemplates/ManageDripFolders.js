@@ -54,15 +54,11 @@ const styles = (theme) => ({
 
 })
 const ManageDripFolders = (props) => {
-    const { classes, folderList, contentLoader} = props;
-    const [editDialog, setEditDialog] = useState(false)
+    const { classes, folderList, contentLoader, editDialog, handleDialog, handleEdit, folderName, folderPass, 
+            folderState, handleChange, handleSubmit} = props;
 
     const [values, setValues] = useState({ ItemsPerPage: 'items_per_page' });
-    const handleChange = name => event => { setValues({ ...values, [name]: event.target.value }); };
-
     const [expanded, setExpanded] = React.useState(false);
-
-    const handleExpandClick = () => { setExpanded(!expanded) };
 
     return (
         <React.Fragment>
@@ -92,17 +88,28 @@ const ManageDripFolders = (props) => {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {folderList && folderList.length > 0 ?
-                                folderList.map(option => {
-                            <TableRow>
+                                {(folderList && folderList.length > 0) ? 
+                                folderList.map((option, index) => (
+                                
+                                <TableRow key = {index}>
                                     <TableCell classes={{ root: classes.TableCellCss }}>{option.folder_name}</TableCell>
                                     <TableCell classes={{ root: classes.TableCellCss }}>{option.folder_password}</TableCell>
-                                    <TableCell classes={{ root: classes.TableCellEditCss }} onClick={() => { setEditDialog(!editDialog) }}>{option.folder_state}</TableCell>
-                                    <TableCell classes={{ root: classes.TableCellCss }}>
-                                        <FiberManualRecordIcon className={classes.StatusActiveIcon} />
-                                    </TableCell>
-                                </TableRow>
-                                })
+                                    <TableCell 
+                                        classes={{ root: classes.TableCellEditCss }} 
+                                        onClick={() => { handleEdit(option.id)}}
+                                        
+                                    >
+                                            Edit
+                                    </TableCell> 
+
+                                        <TableCell classes={{root:classes.TableCellCss}}>
+                                            {(option.folder_state === 'A') ?
+                                                <FiberManualRecordIcon className={classes.StatusActiveIcon}/> :
+                                                <FiberManualRecordIcon className={classes.StatusInactiveIcon}/>
+                                            }
+                                        </TableCell>
+                                    </TableRow>
+                                ))
                                 :
                                 <TableRow>
                                     <TableCell align="center" colSpan="4">
@@ -116,8 +123,7 @@ const ManageDripFolders = (props) => {
                                     }
                                     </TableCell>
                                 </TableRow>
-                                }
-                                
+                            }  
                             </TableBody>
                         </Table>
                     </TableContainer>
@@ -125,165 +131,66 @@ const ManageDripFolders = (props) => {
 
                 {/* edit Dialog */}
                 <Dialog open={editDialog} fullWidth maxWidth="sm">
-                                        <DialogContent className={classes.DialogContentPadding}>
-                                            <Typography variant="h6" className={classes.OpenCategory}>
-                                                Update Category
-                                                <IconButton className={classes.OpenCategoryCloseIcon} onClick={() => { setEditDialog(!editDialog) }}><CloseIcon /></IconButton></Typography>
-                                            <Divider />
-                                            <Span mt={1} mb={3}>
-                                                <Radio classes={{ root: classes.SelectedRadioBtn, checked: classes.SelectedRadioBtn }} />
-                                                <Typography variant="caption">ON</Typography>
-                                                &nbsp;&nbsp;&nbsp;
-                                                <Radio classes={{ root: classes.SelectedRadioBtn, checked: classes.SelectedRadioBtn }} />
-                                                <Typography variant="caption">OFF</Typography>
-                                            </Span>
-                                            <Grid container direction="row">
-                                                <Grid item xs={12} sm={12} md={12} lg={12}>
-                                                    <FormControl fullWidth>
-                                                        <TextField
-                                                            id="category_name"
-                                                            label="Edit Category Name"
-                                                            type="text"
-                                                            variant="outlined"
-                                                            value="Texts to Consultants"
-                                                            InputProps={{ classes: { input: classes.textField, }, }}
-                                                            InputLabelProps={{ classes: { outlined: classes.cssLabel, shrink: classes.LableShrink } }}
-                                                        />
-                                                    </FormControl>
-                                                    <Span mt={3} />
-                                                    <FormControl fullWidth>
-                                                        <TextField
-                                                            id="update_password"
-                                                            label="Update Password"
-                                                            type="password"
-                                                            value="shawn"
-                                                            variant="outlined"
-                                                            InputProps={{ classes: { input: classes.textField, }, }}
-                                                            InputLabelProps={{ classes: { outlined: classes.cssLabel, shrink: classes.LableShrink } }}
-                                                        />
-                                                    </FormControl>
-                                                </Grid>
-                                            </Grid>
-                                            <Button variant="outlined" className={classes.ManageFolderBtn}>Submit</Button>
-                                        </DialogContent>
-                                    </Dialog>
+                    <DialogContent className={classes.DialogContentPadding}>
+                        <Typography variant="h6" className={classes.OpenCategory}>
+                            Update Folder
+                            <IconButton className={classes.OpenCategoryCloseIcon} onClick= { handleDialog }><CloseIcon /></IconButton></Typography>
+                        <Divider />
+                        <Span mt={1} mb={3}>
 
-                {/* Mobile View */}
-                <Hidden only={['lg', 'md', 'sm', 'xl']}>
-                    <Grid container direction='row'>
-                        <Grid item xs={12}>
-                            <Card className={classes.GroupCard}>
-                                <CardHeader className={classes.CardHeadCss}
-                                    avatar={
-                                        <Span display="flex" alignItems="center">
-                                            <Avatar className={classes.GroupAvatar}>
-                                                <FontAwesomeIcon icon={faUsers} />
-                                            </Avatar>
-                                        </Span>
-                                    }
-                                    action={
-                                        <IconButton onClick={handleExpandClick}>
-                                            {(expanded) ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
-                                        </IconButton>
-                                    }
-                                    title={<div className={classes.GroupName}>Folder Name : Texts to Consultants</div>}
-                                    subheader={
-                                        <div className={classes.SubscriberInfo}>
-                                            Password: shawn
-                                        </div>
-                                    }
-                                />
-                                <Collapse in={expanded} timeout="auto" unmountOnExit>
-                                    <CardContent className={classes.CardContentPadding}>
-                                        <Span><Divider /></Span>
-                                        <Span display="flex" alignItems="center" justifyContent="center">
-                                            <Typography className={classes.editClick} onClick={() => { setEditDialog(!editDialog) }}>Edit</Typography>
-                                            {/* edit Dialog */}
-                                            <Dialog open={editDialog} fullWidth maxWidth="sm">
-                                                <DialogContent className={classes.DialogContentPadding}>
-                                                    <Typography variant="h6" className={classes.OpenCategory}>
-                                                        Update Category
-                                                        <IconButton className={classes.OpenCategoryCloseIcon} onClick={() => { setEditDialog(!editDialog) }}><CloseIcon /></IconButton></Typography>
-                                                    <Divider />
-                                                    <Span mt={1} mb={3}>
-                                                        <Radio classes={{ root: classes.SelectedRadioBtn, checked: classes.SelectedRadioBtn }} />
-                                                        <Typography variant="caption">ON</Typography>
-                                                        &nbsp;&nbsp;&nbsp;
-                                                        <Radio classes={{ root: classes.SelectedRadioBtn, checked: classes.SelectedRadioBtn }} />
-                                                        <Typography variant="caption">OFF</Typography>
-                                                    </Span>
-                                                    <Grid container direction="row">
-                                                        <Grid item xs={12} sm={12} md={12} lg={12}>
-                                                            <FormControl fullWidth>
-                                                                <TextField
-                                                                    id="category_name"
-                                                                    label="Edit Category Name"
-                                                                    type="text"
-                                                                    variant="outlined"
-                                                                    value="Texts to Consultants"
-                                                                    InputProps={{ classes: { input: classes.textField, }, }}
-                                                                    InputLabelProps={{ classes: { outlined: classes.cssLabel, shrink: classes.LableShrink } }}
-                                                                />
-                                                            </FormControl>
-                                                            <Span mt={3} />
-                                                            <FormControl fullWidth>
-                                                                <TextField
-                                                                    id="update_password"
-                                                                    label="Update Password"
-                                                                    type="password"
-                                                                    value="shawn"
-                                                                    variant="outlined"
-                                                                    InputProps={{ classes: { input: classes.textField, }, }}
-                                                                    InputLabelProps={{ classes: { outlined: classes.cssLabel, shrink: classes.LableShrink } }}
-                                                                />
-                                                            </FormControl>
-                                                        </Grid>
-                                                    </Grid>
-                                                    <Button variant="outlined" className={classes.ManageFolderBtn}>Submit</Button>
-                                                </DialogContent>
-                                            </Dialog>
-                                            {/* .......... */}
-                                            <FiberManualRecordIcon className={classes.StatusActiveIcon} />
-                                        </Span>
-                                    </CardContent>
-                                </Collapse>
-                            </Card>
-                           
-                            <Card className={classes.GroupCard}>
-                                <CardHeader className={classes.CardHeadCss}
-                                    avatar={
-                                        <Span display="flex" alignItems="center">
-                                            <Avatar className={classes.GroupAvatar}>
-                                                <FontAwesomeIcon icon={faUsers} />
-                                            </Avatar>
-                                        </Span>
-                                    }
-                                    action={
-                                        <IconButton onClick={handleExpandClick}>
-                                            {(expanded) ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
-                                        </IconButton>
-                                    }
-                                    title={<div className={classes.GroupName}>Folder Name : BetwextAdmin</div>}
-                                    subheader={
-                                        <div className={classes.SubscriberInfo}>
-                                            Password: 1234Dtpl	
-                                        </div>
-                                    }
-                                />
-                                <Collapse in={expanded} timeout="auto" unmountOnExit>
-                                    <CardContent className={classes.CardContentPadding}>
-                                        <Span><Divider /></Span>
-                                        <Span display="flex" alignItems="center" justifyContent="center">
-                                            <Typography className={classes.editClick} >Edit</Typography>
-                                            <FiberManualRecordIcon className={classes.StatusInactiveIcon} />
-                                        </Span>
-                                    </CardContent>
-                                </Collapse>
-                            </Card>
+                            <Radio 
+                                name = "folder_state"
+                                value = "A"
+                                classes = {{ root: classes.SelectedRadioBtn, checked: classes.SelectedRadioBtn }} 
+                                checked = { folderState === "A" ? true : false}
+                                onChange = {(e) => handleChange(e.target.name,e.target.value)}
+                            />
+                            <Typography variant="caption">Active</Typography>
+                            &nbsp;&nbsp;&nbsp;
+
+                            <Radio 
+                                name = "folder_state"
+                                value = "I"
+                                classes={{ root: classes.SelectedRadioBtn, checked: classes.SelectedRadioBtn }}
+                                checked = {folderState === "I" ? true : false}
+                                onChange = {(e) => handleChange(e.target.name,e.target.value)}
+                            />
+                            <Typography variant="caption">Inactive</Typography>
+                        </Span>
+                        <Grid container direction="row">
+                            <Grid item xs={12} sm={12} md={12} lg={12}>
+                                <FormControl fullWidth>
+                                    <TextField
+                                        name="folder_name"
+                                        id="folder_name"
+                                        label="Edit Folder Name"
+                                        type="text"
+                                        variant="outlined"
+                                        value={folderName}
+                                        InputProps={{ classes: { input: classes.textField, }, }}
+                                        InputLabelProps={{ classes: { outlined: classes.cssLabel, shrink: classes.LableShrink } }}
+                                        onChange = {(e) => handleChange(e.target.name,e.target.value)}
+                                    />
+                                </FormControl>
+                                <Span mt={3} />
+                                <FormControl fullWidth>
+                                    <TextField
+                                        name="folder_password"
+                                        id="folder_password"
+                                        label="Password"
+                                        type="password"
+                                        value={folderPass}
+                                        variant="outlined"
+                                        InputProps={{ classes: { input: classes.textField, }, }}
+                                        InputLabelProps={{ classes: { outlined: classes.cssLabel, shrink: classes.LableShrink } }}
+                                        onChange = {(e) => handleChange(e.target.name,e.target.value)}
+                                    />
+                                </FormControl>
+                            </Grid>
                         </Grid>
-                    </Grid>
-                </Hidden>
-                {/* ........... */}
+                        <Button variant="outlined" className={classes.ManageFolderBtn} onClick={handleSubmit} >Submit</Button>
+                    </DialogContent>
+                </Dialog>
             </Span>
         </React.Fragment>
     )

@@ -186,7 +186,7 @@ const SideNavigationsMenu = (props) => {
                             : classes.ListItemIconCss
                         }
                     >
-                        <FontAwesomeIcon icon={faUsers} />
+                        <FontAwesomeIcon icon={faFileAlt} />
                     </ListItemIcon>
                     <ListItemText 
                         classes={
