@@ -28,9 +28,9 @@ const ManageTemplates = (props) => {
         listAllFolderAPI(params).then((res)=>{
             if(res.success && res.message_code === 10005){
                 setFolderList(res.data);
-                setFolderId(res.data[2].id);
+                setFolderId(res.data[1].id);
 
-        let catParams = {folder_id:res.data[2].id};
+        let catParams = {folder_id:res.data[1].id};
         listAllCategoryAPI(catParams).then((res)=>{
             if(res.success && res.message_code === 10017){
                 setCategoryList(res.data);

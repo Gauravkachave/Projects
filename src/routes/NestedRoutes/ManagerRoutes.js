@@ -45,6 +45,21 @@ const AddDripFolder = Loader (() =>
 import ('../../containers/Manager/ManagerTemplates/AddDripFolder'),
 );
 
+const ManageBirthday = Loader (() =>
+import('../../containers/Manager/ManagerTemplates/ManageBirthday'),
+);
+
+const ManageDripCategory = Loader (()=>
+import( '../../containers/Manager/ManagerTemplates/ManageDripCategory'),
+);
+
+const AddDripCategory = Loader (() =>
+import ( '../../containers/Manager/ManagerTemplates/AddDripCategory'),
+);
+
+const AddDripTemplate =Loader (() => 
+import ('../../containers/Manager/ManagerTemplates/AddDripTemplate'),
+);
 
 const ManagerRoutes = (props) => {
 const { match } =props;
@@ -61,6 +76,7 @@ const { match } =props;
                     type='private'
                     title='Manager | AddTemplate'
                 />
+
                 <AppRoute
                     exact={true}
                     path={`${match.path}/manage-normal-template`}
@@ -70,6 +86,7 @@ const { match } =props;
                     type='private'
                     title='Manager | ManageTemplates'
                 />
+
                 <AppRoute
                     exact={true}
                     path={`${match.path}/manage-normal-category`}
@@ -79,6 +96,7 @@ const { match } =props;
                     type='private'
                     title='Manager | ManageCategories'
                 />
+
                 <AppRoute
                     exact={true}
                     path={`${match.path}/manage-normal-folder`}
@@ -148,6 +166,47 @@ const { match } =props;
                     type='private'
                     title='Manager | ManageDripFolders | AddDripFolder'
                 />
+
+                <AppRoute
+                    exact={true}
+                    path={`${match.path}/manage-drip-categories`}
+                    component={ManageDripCategory}
+                    requireAuth={auth}
+                    layout={dashboardLayout}
+                    type='private'
+                    title='Manager | ManageDripCategory'
+                />
+
+                <AppRoute
+                    exact={true}
+                    path={`${match.path}/add-drip-category`}
+                    component={AddDripCategory}
+                    requireAuth={auth}
+                    layout={dashboardLayout}
+                    type='private'
+                    title='Manager | ManageDripCategory | AddDripCategory'
+                />
+
+                <AppRoute
+                    exact={true}
+                    path={`${match.path}/manage-birthday`}
+                    component={ManageBirthday}
+                    requireAuth={auth}
+                    layout={dashboardLayout}
+                    type='private'
+                    title='Manager | ManageBirthday'
+                />
+
+                <AppRoute
+                    exact={true}
+                    path={`${match.path}/add-drip-templates`}
+                    component={AddDripTemplate}
+                    requireAuth={auth}
+                    layout={dashboardLayout}
+                    type='private'
+                    title='Manager | AddDripTemplate'
+                />
+
 
             </Switch>
         </React.Fragment>

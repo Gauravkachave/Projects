@@ -51,7 +51,7 @@ const SideNavigationsMenu = (props) => {
   const groupsItems = ['create-public-group', 'create-sync-group', 'manage-public-groups', 'manage-sync-groups'];
 
   const managerItems =['manage-normal-template', 'add-private-template', 'manage-normal-category', 'manage-normal-folder','add-normal-category','edit-normal-template' ,
-                        'manage-drip-templates' ,'manage-drip-folders', 'add-drip-folder'];
+                        'manage-drip-templates' ,'manage-drip-folders', 'add-drip-folder', 'manage-birthday', 'manage-drip-categories', 'add-drip-category', 'add-drip-templates' ];
 
   const [subNavSelected,setSubNavSelected] = useState(null);
     const [clickedItem, setClickedItem] = useState(null);

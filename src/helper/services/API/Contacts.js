@@ -63,3 +63,17 @@ export const updateGroupAPI = (params,signal) => {
     return serviceRequest(url,requestOptions);
 
 }
+
+export const dropDownListAllAPI = (params,signal) => {
+    let url=API_ENDPOINTS.dropDownListAll;
+    
+    url+=`?grp_type=${params['grp_type']}`;
+    
+    let requestOptions={
+        method:'GET',
+        headers:{
+            'session_token' : getSessionToken('session_token')
+        }
+    }
+    return serviceRequest(url,requestOptions);
+}

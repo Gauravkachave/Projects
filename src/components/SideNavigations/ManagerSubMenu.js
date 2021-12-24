@@ -1,7 +1,7 @@
 import React from "react";
 import {
   Drawer,withStyles,List,ListItem,ListItemIcon,ListItemText,Collapse,Avatar,} from "@material-ui/core";
-import { faLongArrowAltRight,faUsers,faFillDrip,} from "@fortawesome/free-solid-svg-icons";
+import { faLongArrowAltRight, faUsers, faFillDrip, faBirthdayCake} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ArrowRightIcon from "@material-ui/icons/ArrowRight";
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
@@ -40,12 +40,20 @@ const ManagerSubmenu = (props) => {
   const { classes, openState, closeSubNavigation } = props;
   const [manageTemplate, setManageTemplate] = React.useState(false);
   const [manageDripTemplate, setManageDripTemplate] = React.useState(false);
+  const [manageBirthday, setManageBirthday] = React.useState(false);
+
   const handlemanageTemplate = () => {
     setManageTemplate(!manageTemplate);
   };
+
   const handlemanageDripTemplate = () => {
     setManageDripTemplate(!manageDripTemplate);
   };
+
+  const handlemanageBirthday = () => {
+    setManageBirthday(!manageBirthday);
+  };
+
   return (
     <React.Fragment>
       <Drawer
@@ -282,7 +290,7 @@ const ManagerSubmenu = (props) => {
                 </ListItemIcon>
                 <ListItemText
                   classes={{ primary: classes.ListTitle }}
-                  primary="Manage Drip Categories"
+                  primary="Manage Drip Category"
                 />
               </ListItem>
             </List>
@@ -313,6 +321,23 @@ const ManagerSubmenu = (props) => {
               </ListItem>
             </List>
           </Collapse>
+        </List>
+
+        <List>
+        <ListItem 
+            button 
+            className={classes.SublistContainerPadding}
+            component={NavLink}
+            to="/manager/manage-birthday"
+            onClick={()=>{closeSubNavigation()}}
+        >
+            <ListItemIcon classes={{root:classes.ListIconContainer}}>
+                <Avatar classes={{root:classes.ListAvatar}}>
+                    <FontAwesomeIcon icon={faBirthdayCake} />
+                </Avatar>
+            </ListItemIcon>
+            <ListItemText classes={{primary:classes.ListTitle}} primary="Manage Birthday" />
+        </ListItem>
         </List>
       </Drawer>
     </React.Fragment>
