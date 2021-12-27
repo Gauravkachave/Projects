@@ -1,7 +1,7 @@
 import React,{useState} from 'react'
 import Picker from 'emoji-picker-react';
 import Span  from "@material-ui/core/Box";
-import { withStyles, Typography, Divider, Grid, FormControl, TextField, MenuItem, Button, IconButton, Dialog, DialogContent, Menu } from '@material-ui/core';
+import { withStyles, Typography, Divider, Grid, FormControl, TextField, MenuItem, Button, IconButton, Dialog, DialogContent, Menu, FormHelperText } from '@material-ui/core';
 import { Timeline, TimelineItem, TimelineSeparator, TimelineDot, TimelineConnector, TimelineContent} from '@material-ui/lab';
 import ImageIcon from '@material-ui/icons/Image';
 import AttachmentIcon from '@material-ui/icons/Attachment';
@@ -50,45 +50,9 @@ const styles = (theme) =>({
     TimelineDotCss:{padding:8, border:'none', boxShadow:'none', background:'#fb6e8a', marginTop:7},
     AddBtnDivider:{width:15, height:2, background:'#bdbdbd'},
 })
-const FolderValues = [
-    {value: 'select_folder',label:'Select Folder'},
-    {value: 'texts_to_consultants',label:'Text to Consultants'},
-    {value: 'texts_to_customer',label:'Text to Customers'},
-    {value: 'texts_to_new_leads',label:'Text to New Leads'},
-    {value: 'spanish_texts_to_consultants',label:'Spanish Text to Consultants'},
-    {value: 'days_followup',label:'21 Days Follow Up Script'},
-];
-const CategoryValues = [
-    {value: 'select_category',label:'Select Category'},
-    {value: 'new_consultant_series',label:'New Consultant Series'},
-    {value: 'new_consultant_unit_site',label:'New Consultant w/out Unit Site'},
-    {value: 'new_product_info',label:'New Product Info & Company Contests'},
-    {value: 'consultant_wishes',label:'Consultant Wishes'},
-    {value: 'consultant_status',label:'Consultant Status'},
-    {value: 'motivational',label:'Motivational'},
-    {value: 'challenges',label:'Challenges'},
-    {value: 'canada_status',label:'CANADA - Consultant Status'},
-    {value: 'new_promos',label:'New Products & Company Promos'},
-    {value: 'monthly_challenges',label:'Monthly Challenges - January'},
-    {value: 'prevoius_texts',label:'Previous Texts'},
-    {value: 'keywords',label:'Keywords'},
-    {value: 'star_countdown',label:'Star Countdown'},
-    {value: 'consultant_spanish',label:'Consultant Status Spanish'},
-    {value: 'new_consultant_spn',label:'New Consultant SPN'},
-    {value: 'consultant_status_sp',label:'Consultant Status SP'},
-    {value: 'seasonal',label:'Seasonal'},
-    {value: 'covid',label:'Covid 19'},
-    {value: 'new_consultant_Twenty',label:'New Consultant 2020'},
-    {value: 'nc_texts',label:'NC Texts Sept 2020'},
-];
-
-
 
 const AddDripTemplate = (props) => {
-    const {classes, folderList, categoryList, folder_id} = props;
-
-    const [values, setValues] = useState({PrivateFolder: 'select_folder',PrivateCategory:'select_category'});
-    const handleChange = name => event => {setValues({ ...values, [name]: event.target.value });};
+    const {classes, inputs, errors, selectedFolder, selectedCategory, handleChange, handleSubmit} = props;
     
     const [addDialog, setAddtDialog] = useState(false);
 
@@ -100,7 +64,6 @@ const AddDripTemplate = (props) => {
     const [chosenEmoji, setChosenEmoji] = useState(null);
     const onEmojiClick = (event, emojiObject) => {setChosenEmoji(emojiObject);};
 
-    const [SelectedIndex, setSelectedIndex] = useState (1);
 
     return (
         <React.Fragment>
@@ -116,35 +79,39 @@ const AddDripTemplate = (props) => {
                                     <TextField
                                         select
                                         name="folder_id"
-                                        value={folder_id}
+                                        value={inputs["folder_id"] || " "}
                                         variant="outlined"
-                                        onChange={handleChange('PrivateFolder')}
+                                        onChange={(e) => handleChange(e.target.name, e.target.value)}
                                         InputProps={{ classes: {input: classes.textFieldFolder,},}}
                                     >
-                                        <MenuItem value = {folder_id}>Select Folder</MenuItem>
-                                        {folderList && folderList.map(option => (
+                                        <MenuItem value = {0}>Select Folder</MenuItem>
+                                        {selectedFolder && selectedFolder.map(option => (
                                             <MenuItem key={option.id} value={option.id}>
                                                 {option.folder_name}
                                             </MenuItem>
                                         ))}
                                     </TextField>
+                                    <FormHelperText error>{errors["folder_id"] || " "}</FormHelperText>
                                 </FormControl>
                             </Grid>
                             <Grid item xs={12} sm={6} md={6} lg={6}>
                                 <FormControl fullWidth>
                                     <TextField
                                         select
-                                        value={values.PrivateCategory}
+                                        name="cat_id"
+                                        value={inputs["cat_id"] || " "}
                                         variant="outlined"
-                                        onChange={handleChange('PrivateCategory')}
+                                        onChange={(e) => handleChange(e.target.name, e.target.value)}
                                         InputProps={{ classes: {input: classes.textFieldFolder,},}}
                                     >
-                                        {CategoryValues.map(option => (
-                                            <MenuItem key={option.value} value={option.value}>
-                                                {option.label}
+                                        <MenuItem value = {0}>Select Category</MenuItem>
+                                        {selectedCategory && selectedCategory.map(option => (
+                                            <MenuItem key={option.cat_id} value={option.cat_id}>
+                                                {option.cat_name}
                                             </MenuItem>
                                         ))}
                                     </TextField>
+                                    <FormHelperText error>{errors["cat_id"] || " "}</FormHelperText>
                                 </FormControl>
                             </Grid>
                         </Grid>
@@ -152,16 +119,19 @@ const AddDripTemplate = (props) => {
                         <Grid item xs={12} sm={12} md={12} lg={12}>
                             <FormControl fullWidth>
                                 <TextField
-                                    id="name"
-                                    label="Name"
+                                    name="tmpl_name"
+                                    id="tmpl_name"
+                                    label="Template Name"
                                     type="text"
                                     variant="outlined"
+                                    onChange={(e) => handleChange(e.target.name, e.target.value)}
                                     InputProps={{ classes: {input: classes.textField,},}}
                                     InputLabelProps={{classes:{outlined:classes.cssLabel,shrink:classes.LableShrink}}}
                                 />
                                 <Typography variant="caption" className={classes.NameInputHelperText}>
                                      Give your template a descriptive name that will be used to identify reports and responses.
                                 </Typography>
+                                <FormHelperText error>{errors["tmpl_name"] || " "}</FormHelperText>
                             </FormControl>
                         </Grid>
                         <Span mt={3}/>
@@ -169,12 +139,14 @@ const AddDripTemplate = (props) => {
                             <div className={classes.MessageInputContainer}>
                                 <FormControl fullWidth>
                                     <TextField
-                                        id="message"
-                                        label="Message"
+                                        name="tmpl_message"
+                                        id="tmpl_message"
+                                        label="Template Message"
                                         type="text"
                                         variant="outlined"
                                         multiline
                                         rows={3}
+                                        onChange={(e) => handleChange(e.target.name, e.target.value)}
                                         InputProps={{ classes: {input: classes.textFieldMessage,multiline: classes.MultitlineInput,},}}
                                         InputLabelProps={{classes:{outlined:classes.cssLabel,shrink:classes.LableShrink}}}
                                     />
@@ -222,9 +194,10 @@ const AddDripTemplate = (props) => {
                                         </div>
                                         <Typography variant="caption" className={classes.RemaingLetters}> 600 | 600</Typography>
                                 </div>
+                                <FormHelperText error>{errors["tmpl_message"] || " "}</FormHelperText>
                             </div>
                         </Grid>
-                        <Button variant="outlined" className={classes.CreateTempBtn}>Create Template</Button>
+                        <Button variant="outlined" className={classes.CreateTempBtn} onClick={handleSubmit}>Create Template</Button>
                     </Grid>
                     {/* ............ */}
                     {/* Right Section */}
@@ -241,23 +214,25 @@ const AddDripTemplate = (props) => {
                                 </Typography>
                                 <Divider/>
                                 <Span bgcolor="#feeef1" mt={2} px={2} py={1}>
-                                    {/* <Button 
-                                        variant={(SelectedIndex === 1) ? "outlined" : "contained"}
+                                    <Button 
+                                        variant='outlined'
+                                        // variant={(SelectedIndex === 1) ? "outlined" : "contained"}
                                         classes={{root:classes.DaysBtn, outlined:classes.SelectedBtn}}
-                                        onClick={ () =>{setSelectedIndex(1)}}
+                                        // onClick={ () =>{setSelectedIndex(1)}}
                                     >
                                         Days
                                     </Button>
                                     <Button 
-                                        variant={(SelectedIndex === 2) ? "outlined" : "contained"}
+                                        variant='outlined'
+                                        // variant={(SelectedIndex === 2) ? "outlined" : "contained"}
                                         classes={{root:classes.DaysBtn, outlined:classes.SelectedBtn}}
-                                        onClick={ () =>{setSelectedIndex(2)}}
+                                        // onClick={ () =>{setSelectedIndex(2)}}
                                     >
                                         Hours
                                     </Button>
                                     <Span mt={2}/>
-                                    {(SelectedIndex===1) && <AddDay/>}
-                                    {(SelectedIndex===2) && <AddHours/>} */}
+                                    {/* {(SelectedIndex===1) && <AddDay/>} */}
+                                    {/* {(SelectedIndex===2) && <AddHours/>} */}
                                   
                                 </Span>
                             </DialogContent>
