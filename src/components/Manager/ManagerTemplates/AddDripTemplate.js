@@ -1,7 +1,7 @@
 import React,{useState} from 'react'
 import Picker from 'emoji-picker-react';
 import Span  from "@material-ui/core/Box";
-import { withStyles, Typography, Divider, Grid, FormControl, TextField, MenuItem, Button, IconButton, Dialog, DialogContent, Menu, FormHelperText } from '@material-ui/core';
+import { withStyles, Typography, Divider, Grid,ButtonGroup,  FormControl, TextField, MenuItem, Button, IconButton, Dialog, DialogContent, Menu ,FormHelperText} from '@material-ui/core';
 import { Timeline, TimelineItem, TimelineSeparator, TimelineDot, TimelineConnector, TimelineContent} from '@material-ui/lab';
 import ImageIcon from '@material-ui/icons/Image';
 import AttachmentIcon from '@material-ui/icons/Attachment';
@@ -10,6 +10,7 @@ import NotInterestedIcon from '@material-ui/icons/NotInterested';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import AddIcon from '@material-ui/icons/Add';
 import CloseIcon from '@material-ui/icons/Close';
+import DripList from './DripList';
 
 const styles = (theme) =>({
     AddPTemplateTitle:{fontSize:20, fontWeight:'bold'},
@@ -37,7 +38,7 @@ const styles = (theme) =>({
     AddDripMsg:{display:'flex', alignItems:'center', justifyContent:'space-between', fontSize:16},
     DialogContentPadding:{padding:'0px 15px 15px 15px !important'},
     DialogWidth:{maxWidth:515},
-    DaysBtn:{padding:'12px 93px', color:'#fff', fontSize:11, background:'#fb6e8a', borderRadius:30, boxShadow:'none !important', marginLeft:6, marginTop:10},
+    DaysBtn:{padding:'12px 93px', color:'#fff', fontSize:11, background:'#fb6e8a', boxShadow:'none !important', marginLeft:6, marginTop:10},
     AllImages:{width:45, marginRight:8, marginTop:4},
     SelectedBtn:{color:'#fb6e8a', background:'#fff', border:'1px solid #fb6e8a'},
 
@@ -63,7 +64,11 @@ const AddDripTemplate = (props) => {
 
     const [chosenEmoji, setChosenEmoji] = useState(null);
     const onEmojiClick = (event, emojiObject) => {setChosenEmoji(emojiObject);};
+    const [dripType, setDripType] = useState('DAY');
 
+    const handleChangeDrip = (type) => {
+        setDripType(type);
+    }
 
     return (
         <React.Fragment>
@@ -79,19 +84,19 @@ const AddDripTemplate = (props) => {
                                     <TextField
                                         select
                                         name="folder_id"
-                                        value={inputs["folder_id"] || " "}
+                                        value={inputs["folder_id"] || 0}
                                         variant="outlined"
                                         onChange={(e) => handleChange(e.target.name, e.target.value)}
                                         InputProps={{ classes: {input: classes.textFieldFolder,},}}
                                     >
-                                        <MenuItem value = {0}>Select Folder</MenuItem>
+                                        <MenuItem value = "0">Select Folder</MenuItem>
                                         {selectedFolder && selectedFolder.map(option => (
                                             <MenuItem key={option.id} value={option.id}>
                                                 {option.folder_name}
                                             </MenuItem>
                                         ))}
                                     </TextField>
-                                    <FormHelperText error>{errors["folder_id"] || " "}</FormHelperText>
+                                    <FormHelperText error>{errors["folder_id"] || ""}</FormHelperText>
                                 </FormControl>
                             </Grid>
                             <Grid item xs={12} sm={6} md={6} lg={6}>
@@ -99,7 +104,7 @@ const AddDripTemplate = (props) => {
                                     <TextField
                                         select
                                         name="cat_id"
-                                        value={inputs["cat_id"] || " "}
+                                        value={inputs["cat_id"] || 0}
                                         variant="outlined"
                                         onChange={(e) => handleChange(e.target.name, e.target.value)}
                                         InputProps={{ classes: {input: classes.textFieldFolder,},}}
@@ -123,6 +128,7 @@ const AddDripTemplate = (props) => {
                                     id="tmpl_name"
                                     label="Template Name"
                                     type="text"
+                                    value={inputs["tmpl_name"] || " "}
                                     variant="outlined"
                                     onChange={(e) => handleChange(e.target.name, e.target.value)}
                                     InputProps={{ classes: {input: classes.textField,},}}
@@ -144,6 +150,7 @@ const AddDripTemplate = (props) => {
                                         label="Template Message"
                                         type="text"
                                         variant="outlined"
+                                        value={inputs["tmpl_message"] || ""}
                                         multiline
                                         rows={3}
                                         onChange={(e) => handleChange(e.target.name, e.target.value)}
@@ -199,8 +206,7 @@ const AddDripTemplate = (props) => {
                         </Grid>
                         <Button variant="outlined" className={classes.CreateTempBtn} onClick={handleSubmit}>Create Template</Button>
                     </Grid>
-                    {/* ............ */}
-                    {/* Right Section */}
+                   
                     <Grid item xs={12} sm={12} md={6} lg={6}>
                         <Typography variant="body1" className={classes.AddMsgTitle}>Add Drip Message
                             <IconButton className={classes.AddIconBtn} onClick={()=>{setAddtDialog(!addDialog)}}><AddIcon/></IconButton>
@@ -210,30 +216,33 @@ const AddDripTemplate = (props) => {
                             <DialogContent className={classes.DialogContentPadding}>
                                 <Typography variant="h6" className={classes.AddDripMsg}>
                                     Add Drip Message
-                                    <IconButton className={classes.AddDripMsgCloseIcon} onClick={()=>{setAddtDialog(!addDialog)}}><CloseIcon/></IconButton>
+                                    <IconButton className={classes.AddDripMsgCloseIcon} onClick={()=>{setAddtDialog(!addDialog)}}>
+                                        <CloseIcon/>
+                                    </IconButton>
                                 </Typography>
                                 <Divider/>
                                 <Span bgcolor="#feeef1" mt={2} px={2} py={1}>
-                                    <Button 
-                                        variant='outlined'
-                                        // variant={(SelectedIndex === 1) ? "outlined" : "contained"}
-                                        classes={{root:classes.DaysBtn, outlined:classes.SelectedBtn}}
-                                        // onClick={ () =>{setSelectedIndex(1)}}
-                                    >
-                                        Days
-                                    </Button>
-                                    <Button 
-                                        variant='outlined'
-                                        // variant={(SelectedIndex === 2) ? "outlined" : "contained"}
-                                        classes={{root:classes.DaysBtn, outlined:classes.SelectedBtn}}
-                                        // onClick={ () =>{setSelectedIndex(2)}}
-                                    >
-                                        Hours
-                                    </Button>
-                                    <Span mt={2}/>
-                                    {/* {(SelectedIndex===1) && <AddDay/>} */}
-                                    {/* {(SelectedIndex===2) && <AddHours/>} */}
-                                  
+                                    <ButtonGroup size="large" className={classes.BtnContainer}>
+                                        <Button 
+                                            variant={(dripType === "HOUR") ? "outlined" : "contained"}
+                                            classes={{root:classes.DaysBtn, outlined:classes.SelectedBtn}}
+                                            onClick={ () =>{handleChangeDrip('DAY')}}
+                                        >
+                                            Days
+                                        </Button>
+                                        <Button 
+                                            variant={(dripType === 'DAY') ? "outlined" : "contained"}
+                                            classes={{root:classes.DaysBtn, outlined:classes.SelectedBtn}}
+                                            onClick={ () =>{handleChangeDrip('HOUR')}}
+                                        >
+                                            Hours
+                                        </Button>
+                                    </ButtonGroup>
+
+                                    <DripList 
+                                       dripType={dripType}
+                                    //    selecthour={selecthour} 
+                                    />
                                 </Span>
                             </DialogContent>
                         </Dialog>
@@ -254,42 +263,9 @@ const AddDripTemplate = (props) => {
                                     </Span>
                                     </Span>
                                 </TimelineContent>
-                            </TimelineItem>
-                            <TimelineItem classes={{missingOppositeContent:classes.MissingConentCss}}>
-                                <TimelineSeparator>
-                                    <TimelineDot classes={{defaultGrey:classes.TimelineDotCss}}/>
-                                    <TimelineConnector />
-                                </TimelineSeparator>
-                                <TimelineContent classes={{root:classes.DaysContainer}}>
-                                    <Typography variant="subtitle2" className={classes.TimelineDayRangeText}>Day 1</Typography>
-                                    <Span className={classes.DaysContent}>
-                                        <Typography variant="caption">
-                                            opposed to using 'Content here, content here', making it look like readabled English. 
-                                            Many desktop publishing packages and web page
-                                        </Typography>
-                                    </Span>
-                                </TimelineContent>
-                            </TimelineItem>
-                            <TimelineItem classes={{missingOppositeContent:classes.MissingConentCss}}>
-                                <TimelineSeparator>
-                                    <TimelineDot classes={{defaultGrey:classes.TimelineDotCss}}/>
-                                    <div style={{display:"contents"}}>
-                                        <TimelineConnector />
-                                        <Divider className={classes.AddBtnDivider}/>
-                                    </div>
-                                </TimelineSeparator>
-                                <TimelineContent classes={{root:classes.DaysContainer}}>
-                                     <Typography variant="subtitle2" className={classes.TimelineDayRangeText}>Day 3</Typography>
-                                    <Span className={classes.DaysContent}>
-                                        <Typography variant="caption">
-                                            search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have in  evolved over the years,
-                                        </Typography>
-                                    </Span>
-                                </TimelineContent>
                             </TimelineItem> 
                         </Timeline>
                     </Grid>
-                    {/* ............. */}
                 </Grid>
             </Span>
         </React.Fragment>

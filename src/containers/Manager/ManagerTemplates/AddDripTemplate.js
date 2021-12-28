@@ -4,7 +4,7 @@ import {listAllFolderAPI, listAllCategoryAPI, addTemplateAPI} from '../../../hel
 
 const AddDripTemplate = () => {
     const [inputs, setInputs] = useState({
-        folder_id : "0", cat_id : "0", tmpl_type : "DRIP"
+        folder_id : 0, cat_id : 0, tmpl_type : "DRIP"
     });
     const [errors, setErrors] = useState({});
     const [selectedFolder,setSelectedFolder]=useState(null);
@@ -71,7 +71,7 @@ const AddDripTemplate = () => {
 
             errordata.forEach(value => {
                 if(value === 'folder_id' || value === 'cat_id'){
-                    if(inputs[value] === '0'){
+                    if(inputs[value] === 0){
                     isValid = false;
                     error[value] = "This field is required";
                 }}
